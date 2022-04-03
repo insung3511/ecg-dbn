@@ -33,7 +33,7 @@ class RBM():
         return torch.mean(-(hidden_term) - visible_term)
 
     def forward(self, visible):
-        hidden = self.visible_to_hidden(v)
+        hidden = self.visible_to_hidden(visible)
         for _ in range(self.k):
             visible_gibbs = self.hidden_to_visible(hidden)
             hidden = self.visible_to_hidden(visible_gibbs)
