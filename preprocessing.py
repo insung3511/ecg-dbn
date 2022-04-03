@@ -35,4 +35,4 @@ test.columns = ['sample_number', 'V5', 'V2']
 
 def convert_table(data):
     table = pd.pivot_table(data, values='', index=['sample_number'], columns=['V5', 'V2'])
-    
+    tables

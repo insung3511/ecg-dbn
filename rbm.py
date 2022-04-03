@@ -1,16 +1,13 @@
 import torch
 
-
 class RBM():
-
-    def __init__(self, num_visible, num_hidden, k, learning_rate=1e-3, momentum_coefficient=0.5, weight_decay=1e-4, use_cuda=True):
+    def __init__(self, num_visible, num_hidden, k, learning_rate=1e-3, momentum_coefficient=0.5, weight_decay=1e-4):
         self.num_visible = num_visible
         self.num_hidden = num_hidden
         self.k = k
         self.learning_rate = learning_rate
         self.momentum_coefficient = momentum_coefficient
         self.weight_decay = weight_decay
-        self.use_cuda = use_cuda
 
         self.weights = torch.randn(num_visible, num_hidden) * 0.1
         self.visible_bias = torch.ones(num_visible) * 0.5
@@ -77,9 +74,4 @@ class RBM():
 
     def _random_probabilities(self, num):
         random_probabilities = torch.rand(num)
-
-        if self.use_cuda:
-            random_probabilities = random_probabilities.cuda()
-
         return random_probabilities
-
