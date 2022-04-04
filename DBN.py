@@ -24,5 +24,6 @@ class DBN(nn.Module):
         self.rbm_nodes = []
 
         for i in range(self.n_layer):
-            
-
+            input_size = 0
+            if i == 0:
+                input_size = visible_units

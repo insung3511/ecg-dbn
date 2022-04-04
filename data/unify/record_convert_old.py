@@ -3,8 +3,8 @@ import re
 
 FILE_NUM_FLAG = 0
 RESULT_PATH = './result_'
-DB_LIST = ['ahadb', 'cudb', 'edb', 'nstdb', 'nst_old']
-USER_PATH = input("[USER] Type Database category (aha, cu, esc, nst, nst_old): ")
+DB_LIST = ['ahadb', 'cudb', 'edb', 'nstdb', 'nst_old', 'svdb']
+USER_PATH = input("[USER] Type Database category (aha, cu, esc, nst, nst_old, svdb): ")
 
 print("[INFO] Pre-processing for make clean")
 
@@ -20,6 +20,8 @@ for i in range(len(DB_LIST)):
         FILE_NUM_FLAG = 3
     elif (user_path_nospace == 'nst_old'):
         FILE_NUM_FLAG = 3
+    elif (user_path_nospace == 'svdb'):
+        FILE_NUM_FLAG = 4
     else:
         print("[ERRR]\tYour typed ", USER_PATH, " but, system can not found what database it is.")
         print("[ERRR]\tSystem out.")
