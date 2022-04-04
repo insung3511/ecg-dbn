@@ -25,7 +25,16 @@ for i in range(len(DB_LIST)):
 print("[INFO] Your typed", USER_PATH, " and system detected same database from list : ", DB_LIST[FILE_NUM_FLAG])
 print("[INFO] System continue ... ")
 
+print("[INFO] Creating result direcotory...")
 PATH = './' + DB_LIST[FILE_NUM_FLAG] + '/' + '1.0.0/'
+for i in range(len(DB_LIST)):
+    try:
+        if not os.path.exists(RESULT_PATH + DB_LIST[FILE_NUM_FLAG]):
+            os.makedirs(RESULT_PATH + DB_LIST[FILE_NUM_FLAG])
+    except OSError:
+        print("[ERRR] \t\t\t Error with creating direcotry : ", RESULT_PATH + DB_LIST[FILE_NUM_FLAG])
+        print("[ERRR] \t\t\t System exit by exit(1)")
+        exit(1)
 
 print("[INFO] Read records file from ", PATH)
 with open(PATH + 'RECORDS') as f:
