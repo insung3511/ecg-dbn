@@ -15,16 +15,16 @@ for i in range(len(DB_LIST)):
 PATH = './' + DB_LIST[FILE_NUM_FLAG] + '/'
 
 file_list = os.listdir(PATH)
-for i in range(len(file_list) - 1):
-    if (file_list[i] == '.DS_Store' or
+for i in range(len(file_list)):
+    '''if (file_list[i] ==
         'ANNOTATORS' or
         'RECORDS' or
         'RECORDS-development-set' or
         'RECORDS-test-set' or
         'index.html'):
-        file_list.pop(i)
+        file_list.pop(i)'''
     file_list_len = int(len(file_list[i]))
-
+    print(file_list)
     if FILE_NUM_FLAG == 0:      # AHA DB
         file_list[i] = str(file_list[i])[:4]
     elif FILE_NUM_FLAG == 1:    # CU DB
