@@ -71,6 +71,7 @@ for i in range(len(db2_file_list)):
         print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
         result_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, mlii_list))))
     except KeyError:
+        print("[ERRR]\t\t\t{0}th RECORD is not work. Maybe problem with columns stuff.".format(i))
         continue
 
     now_index += 200
@@ -107,7 +108,7 @@ And now we going to do 600ms-width median filtering from 200ms-width median filt
 #######################
 combine_list_in_list = result_db1_list + result_db2_list + result_db3_list
 combine_list = list(itertools.chain(*combine_list_in_list))
-print(combine_list)
+#print(combine_list) 
 
 final_result = []
 now_index = 0
