@@ -1,36 +1,79 @@
-import matplotlib.pyplot as plt
-from time import time
-import medfilt as mf
+from scipy import signal as sp
 import pandas as pd
 import numpy as np
-import scipy as sp
+import os
 
-DATA_PATH = './final_db3/rdsamp_svdb800.csv'
-# FIELDS = ['Elapsed time', 'ECG1']
-og_df = pd.read_csv(DATA_PATH, skipinitialspace=True)
-second_indexing = 0
-all_result = []
+print("[INFO] Dataset setting up start...")
+DATA_PATH = ['./final_db1/', './final_db2/', './final_db3/']
+PATH_NUMBER = None
+#DATA_PATH = './final_db3/rdsamp_svdb800.csv'
+db1_file_list = []
+db2_file_list = []
+svdb_file_list = []
+previous_index = 0
+current_index = 0
+future_index = 200
+temp_list = []
 
-# Get seconds datas
-ecg_seconds = list(og_df["'Elapsed time'"])
+db1_filtered_list = []
+db2_filtered_list = []
+db3_filtered_list = []
 
-# Get ECG1 mV datas
-ecg_v1 = list(og_df["'ECG1'"])
+dict_db = {
+    "db1" : None,
+    "db2" : None,
+    "svdb" : None
+}
 
-def time_matching(current_index):
-    while True:
-        current_index += 1
-        if  200.0 <= float(ecg_seconds[current_index]) <= 200.0:
-            return current_index + 2
+print("[INFO] Indexing file direcotry and list...")
+file_dir_list = os.listdir('.')
+for i in range(len(file_dir_list)):
+    if (file_dir_list[i] == 'final_db1'):
+        PATH_NUMBER = i
+        print("[IWIP]\tFinal_db1 directory found!")
+        for i in range(len(os.listdir(DATA_PATH[0]))):
+            db1_list = os.listdir(DATA_PATH[0])
+        print("[DONE]\t\tRead file list from final_db1...")
 
-print("#"*10, (ecg_seconds[4]))
+    elif (file_dir_list[i] == 'final_db2'):
+        PATH_NUMBER = i
+        print("[IWIP]\tFinal_db2 directory found!")
+        for i in range(len(os.listdir(DATA_PATH[1]))):
+            db2_list = os.listdir(DATA_PATH[1])
+        print("[DONE]\t\tRead file list from final_db2...")
+        
+    elif (file_dir_list[i] == 'final_db3'):
+        PATH_NUMBER = i
+        print("[IWIP]\tFinal_db3 directory found!")
+        for i in range(len(os.listdir(DATA_PATH[2]))):
+            db3_list = os.listdir(DATA_PATH[2])
+        print("[DONE]\t\tRead file list from final_db3...")
 
-def ecg_collecting(current_index, ending_index, input_list):
-    for i in range(current_index, ending_index):
-        input_list.append(float(ecg_v1[i]))
-    return input_list
+def read_csv(path_number):
+    database_csv = pd.read_csv(DATA_PATH[path_number], skipinitialspace=True)
+    return database_csv
 
-# print(type(ecg_collecting(second_indexing, time_matching(second_indexing), ecg_v1)))
-# all_result[0] = np.median(ecg_collecting(second_indexing, time_matching(second_indexing), ecg_v1))
-# sp.signal.medfilt(ecg_v1, 200)
+def slice_ecg_data(previous_index, current_index, input_array):
+    temp_list.clear()
+    for i in range(previous_index, current_index):
+        temp_list.append(float(input_array[i]))
+    return temp_list
 
+def median_200ms(database_csv, path_number):
+    current_index = 0
+    future_index = 200
+    for i in range(0, len(database_csv)):
+        if current_index >= len(database_csv):
+            break
+        print("[INFO] >>>>>>>>> ", i, current_index, future_index)
+        print(sp.medianfilt(slice_ecg_data(current_index, future_index, database_csv)))
+        current_index += 200
+        future_index += 200
+
+# for i in range(0, len(og_df)):
+#     if current_index >= len(og_df):
+#         break
+#     print(">>>>>>>>", i, current_index, future_index)
+#     print(sp.medfilt(slice_ecg_data(current_index, future_index, ecg_v1)), '\n###')
+#     current_index += 200
+#     future_index += 200
