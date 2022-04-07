@@ -1,11 +1,11 @@
-from rbm import HIDDEN_UNITS, K_FOLD, LEARNING_RATE, VISIBLE_UNITS
+# Copy from https://github.com/AlvinLXS/DBN-and-RBM-in-pytorch/blob/master/DBN.py
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
 from RBM import RBM
 
-VISIBLE_UNITS = 0
+VISIBLE_UNITS = 127000
 HIDDEN_UNITS = [64, 100]
 K_FOLD = 5
 LEARNING_RATE = 1e-5
