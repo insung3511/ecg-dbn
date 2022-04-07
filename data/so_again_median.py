@@ -71,6 +71,10 @@ for i in range(len(db2_file_list)):
         print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
         result_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, mlii_list))))
     except KeyError:
+        # for i in range(len(FINAL_DB2_COLUMMS)):
+        #     if db2_csv[FINAL_DB2_COLUMMS[i]]:
+        #         something_list = list(db2_csv[FINAL_DB2_COLUMMS[i]])
+        #         result_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, something_list))))
         print("[ERRR]\t\t\t{0}th RECORD is not work. Maybe problem with columns stuff.".format(i))
         continue
 
