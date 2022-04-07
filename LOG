@@ -1,0 +1,4 @@
+Apr. 07. 2022 (B. InSung)
+- so_again_median_filter.py 코드로 신호 처리는 일부 마무리. 단, MLII 컬럼만 읽어올 수 있다는 문제 발생.
+- 라이센스 및 README, LOG.txt 추가
+- so_again_median_filter.py 에서 주 코드 내용을 class로 변경. 
