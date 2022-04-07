@@ -1,0 +1,4 @@
+Apr. 07. 2022 (B. InSung)
+- so_again_median_filter.py 코드로 신호 처리는 일부 마무리. 단, MLII 컬럼만 읽어올 수 있다는 문제 발생.
+- RBM 모델 구축 및 DBN 모델 구축 필요. 모델 Input을 위해서 numpy ndarray로 출력값 추출을 생각하고 있긴 한데 이ㅔ 사람 사정이라는게 바뀌는거라서 모르겠네.
+- 라이센스 및 README, LOG.txt 추가
