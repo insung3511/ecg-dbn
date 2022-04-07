@@ -1,7 +1,8 @@
 import itertools
-from re import L
+from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
+import numpy as np
 import os
 
 # FILE_FLAG_1, FILE_FLAG_2 = False
@@ -20,6 +21,8 @@ result_db3_list = []
 
 # Slicing memory list
 temp_list = []
+
+outfile = TemporaryFile()
 
 #######################
 # Slicing ecg dataset #
@@ -131,5 +134,7 @@ for i in range(len(combine_list)):
     final_result.append((sp.medfilt(slice_ecg_data(now_index, post_index, combine_list))))
     now_index += 600
     post_index += 600
+
+np.save('save_filtered.npy', final_result)
 
 print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
