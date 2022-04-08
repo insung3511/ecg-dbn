@@ -5,6 +5,8 @@ import numpy as np
 import itertools
 import os
 
+from data.again_median import slice_ecg_data
+
 # FILE_FLAG_1, FILE_FLAG_2 = False
 FILE_FLAG_NUMBER = 0
 DATA_PATH = ['./final_db1/', './final_db2/', './final_db3/']
@@ -23,16 +25,17 @@ result_db3_list = []
 temp_list = []
 
 outfile = TemporaryFile()
-run_code_from = True
+run_code_from = bool()
 
 class medain_filtering():
-    if run_code_from == True:
-        for i in range(len(DATA_PATH)):
-            DATA_PATH[i] = "data/" + DATA_PATH[i]
-
     #######################
     # Slicing ecg dataset #
     #######################
+    def data_path_flex(run_code_from):
+        if run_code_from == True:
+            for i in range(len(DATA_PATH)):
+                DATA_PATH[i] = "data/" + DATA_PATH[i]
+
     def slice_ecg_data(current_index, future_index, input_array):
         temp_list.clear()
         for i in range(current_index, future_index):
@@ -40,6 +43,8 @@ class medain_filtering():
         return temp_list
 
     def ecg_filtering():
+        slice_ecg_data()
+
         print("[INFO] Read file and indexing start...")
         file_dir_list = os.listdir('.')
         now_index = 0
@@ -144,3 +149,4 @@ class medain_filtering():
 
         print(len(combine_list))
         print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
+        return tuple(final_result)
