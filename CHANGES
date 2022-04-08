@@ -1,6 +1,6 @@
 Apr. 08. 2022 (B. InSung)
-- GB-DBN 설계 시도
-- 속이 안좋아서 일단 쉴래요. 시리얼을 너무 많이 먹었나봐.
+- GB-DBN 설계 시도 (다시 해보겠습니다...)
+    - GB-DBN 보다는 GB-RBM 설계를 먼저해보고 그 다음에 GDBN (GB-DBN) 을 설계 하는 방향으로 갈 예정
 
 Apr. 07. 2022 (B. InSung)
 - so_again_median_filter.py 코드로 신호 처리는 일부 마무리. 단, MLII 컬럼만 읽어올 수 있다는 문제 발생.
