@@ -1,3 +1,4 @@
+from scipy.signal import butter, lfilter, freqz
 from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
@@ -9,7 +10,7 @@ from data.again_median import slice_ecg_data
 
 # FILE_FLAG_1, FILE_FLAG_2 = False
 FILE_FLAG_NUMBER = 0
-DATA_PATH = ['./final_db1/', './final_db2/', './final_db3/']
+DATA_PATH_OG = ['./final_db1/', './final_db2/', './final_db3/']
 
 FINAL_DB2_COLUMMS = ['MLII', 'V1', 'V2', 'V5']
 
@@ -29,12 +30,23 @@ run_code_from = bool()
 
 class medain_filtering():
     #######################
+    #    Low-pass filter  #
+    #######################
+    def butter_lowpass(cutoff, fs, butter_data, order=12):
+        nyq = 0.5 * fs
+        normal_cutoff = cutoff / nyq
+        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        y = lfilter(b, a, butter_data)
+        return y
+
+    #######################
     # Slicing ecg dataset #
     #######################
     def data_path_flex(run_code_from):
         if run_code_from == True:
-            for i in range(len(DATA_PATH)):
-                DATA_PATH[i] = "data/" + DATA_PATH[i]
+            for i in range(len(DATA_PATH_OG)):
+                DATA_PATH_OG[i] = "data/" + DATA_PATH_OG[i]
+        return DATA_PATH_OG
 
     def slice_ecg_data(current_index, future_index, input_array):
         temp_list.clear()
@@ -42,8 +54,9 @@ class medain_filtering():
             temp_list.append(float(input_array[i]))
         return temp_list
 
-    def ecg_filtering():
-        slice_ecg_data()
+    def ecg_filtering(self, DATA_PATH):
+        # slice_ecg_data()
+        slice_ecg_data = self.slice_ecg_data()
 
         print("[INFO] Read file and indexing start...")
         file_dir_list = os.listdir('.')
@@ -148,5 +161,7 @@ class medain_filtering():
             post_index += 600
 
         print(len(combine_list))
+        butter_lowpass(35, )
+        
         print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
         return tuple(final_result)

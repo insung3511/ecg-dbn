@@ -14,19 +14,15 @@ update_offset = 0.01
 filpped = False
 
 np.random.seed(42)
+mf.ecg_filtering(mf.data_path_flex(True))
+whitened_data = zca.project(data)
 
-data = mf.ecg_filtering()
+# time(sample, x-axis) and mV(y-axis)
+train_data = whitened_data[0:np.int32(whitened_data.shape[0] / 2.0), :]
+test_data = whitened_data[np.int32(whitened_data.shape[0] / 2.0):
+                          whitened_data.shape[0], :]
 
-zca = pre.ZCA(tuple(data.shape[1]))
-print(zca)
-# whitened_data = zca.project(data)
-
-# # time(sample, x-axis) and mV(y-axis)
-# train_data = whitened_data[0:np.int32(whitened_data.shape[0] / 2.0), :]
-# test_data = whitened_data[np.int32(whitened_data.shape[0] / 2.0):
-#                           whitened_data.shape[0], :]
-
-# h1 = 2
-# h2 = 2
-# v1 = whitened_data.shape[1]
-# v2 = 1
+h1 = 2
+h2 = 2
+v1 = whitened_data.shape[1]
+v2 = 1
