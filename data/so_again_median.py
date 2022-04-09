@@ -1,12 +1,11 @@
-from scipy.signal import butter, lfilter, freqz
+
+from scipy.signal import butter, lfilter
 from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
 import numpy as np
 import itertools
 import os
-
-from data.again_median import slice_ecg_data
 
 # FILE_FLAG_1, FILE_FLAG_2 = False
 FILE_FLAG_NUMBER = 0
@@ -39,24 +38,38 @@ class medain_filtering():
         y = lfilter(b, a, butter_data)
         return y
 
-    #######################
-    # Slicing ecg dataset #
-    #######################
+    ########################
+    #  Renaming data path  #
+    ########################
     def data_path_flex(run_code_from):
         if run_code_from == True:
             for i in range(len(DATA_PATH_OG)):
                 DATA_PATH_OG[i] = "data/" + DATA_PATH_OG[i]
         return DATA_PATH_OG
 
+    #######################
+    # Slicing ecg dataset #
+    #######################
     def slice_ecg_data(current_index, future_index, input_array):
         temp_list.clear()
         for i in range(current_index, future_index):
             temp_list.append(float(input_array[i]))
         return temp_list
 
+    #######################
+    #      Main Code      #
+    #######################
     def ecg_filtering(self, DATA_PATH):
         # slice_ecg_data()
-        slice_ecg_data = self.slice_ecg_data()
+        
+        #######################
+        # Slicing ecg dataset #
+        #######################
+        def slice_ecg_data(current_index, future_index, input_array):
+            temp_list.clear()
+            for i in range(current_index, future_index):
+                temp_list.append(float(input_array[i]))
+            return temp_list
 
         print("[INFO] Read file and indexing start...")
         file_dir_list = os.listdir('.')
@@ -99,10 +112,6 @@ class medain_filtering():
                 print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
                 result_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, mlii_list))))
             except KeyError:
-                # for i in range(len(FINAL_DB2_COLUMMS)):
-                #     if db2_csv[FINAL_DB2_COLUMMS[i]]:
-                #         something_list = list(db2_csv[FINAL_DB2_COLUMMS[i]])
-                #         result_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, something_list))))
                 print("[ERRR]\t\t\t{0}th RECORD is not work. Maybe problem with columns stuff.".format(i))
                 continue
 
@@ -140,7 +149,6 @@ class medain_filtering():
         #######################
         combine_list_in_list = result_db1_list + result_db2_list + result_db3_list
         combine_list = list(itertools.chain(*combine_list_in_list))
-        #print(combine_list) 
 
         final_result = []
         now_index = 0
@@ -151,8 +159,6 @@ class medain_filtering():
 
         print("......\t...................i\tCurrent_Index\tFrom_Index")
 
-        # print(all_200ms_list)
-        # mlii_list = list(db1_csv["'MLII'"])
         for i in range(len(combine_list)):
             if len(combine_list) <= post_index: break
             print("[IWIP]\tfinal all list reading...", i, now_index, post_index)
@@ -161,7 +167,7 @@ class medain_filtering():
             post_index += 600
 
         print(len(combine_list))
-        butter_lowpass(35, )
+        butter_lowpass(3.667, 35.0, final_result)
         
         print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
         return tuple(final_result)

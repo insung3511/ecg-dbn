@@ -1,3 +1,8 @@
+Apr. 10. 2022 (B. InSung)
+- 논문에서 말하는 모델 방식에 수정 필요.
+    - 첫번째 Visible layer 에는 GB-RBM을 활용하고, 두번째 Hidden layer 에는 BB-RBM을 활용.
+    - 시간상 모델 제작을 위해서 https://github.com/meownoid/tensorflow-rbm 에서 코드 활용.
+
 Apr. 08. 2022 (B. InSung)
 - GB-DBN 설계 시도 (다시 해보겠습니다...)
     - GB-DBN 보다는 GB-RBM 설계를 먼저해보고 그 다음에 GDBN (GB-DBN) 을 설계 하는 방향으로 갈 예정
