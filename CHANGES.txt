@@ -2,13 +2,11 @@ Apr. 10. 2022 (B. InSung)
 - 논문에서 말하는 모델 방식에 수정 필요.
     - 첫번째 Visible layer 에는 GB-RBM을 활용하고, 두번째 Hidden layer 에는 BB-RBM을 활용.
     - 시간상 모델 제작을 위해서 https://github.com/meownoid/tensorflow-rbm 에서 코드 활용.
-
-- so_again_median 코드에서 전체 내용을 객체화 시킴.
-- fit에서 step 오류 발생. 오전 10시 45분, 당장의 코딩은 중단.
-
-- 35hz filter reference
-    : https://www.delftstack.com/howto/python/low-pass-filter-python/
-    : https://medium.com/analytics-vidhya/how-to-filter-noise-with-a-low-pass-filter-python-885223e5e9b7
+- filtering code 수정 완료.
+    - 35hz filter reference
+        : https://www.delftstack.com/howto/python/low-pass-filter-python/
+        : https://medium.com/analytics-vidhya/how-to-filter-noise-with-a-low-pass-filter-python-885223e5e9b7
+- model train data 및 test data tuple 추출.
 
 Apr. 08. 2022 (B. InSung)
 - GB-DBN 설계 시도 (다시 해보겠습니다...)
