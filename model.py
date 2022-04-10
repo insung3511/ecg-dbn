@@ -1,6 +1,8 @@
-from tfrbm.util import xavier_init, sample_bernoulli, sample_gaussian
+from matplotlib.pyplot import axis
 from tensorflow.keras.layers import Input, Conv1D, MaxPooling1D, Dropout, BatchNormalization, Activation, Add, Flatten, Dense
+from tfrbm.util import xavier_init, sample_bernoulli, sample_gaussian
 from typing import Dict, List
+import data.medain_filtering_class as mf
 import tensorflow as tf
 import numpy as np
 import logging
@@ -52,7 +54,7 @@ class BBRBM():
         """
         raise NotImplementedError('step is not implemented')
 
-    def _apply_momentum(self, old: tf.Tensor, new: tf.Tensor) -> tf.Tensor:
+    def _apply_momentum(self, old: tf.Tensor, nㄷㄷㄷew: tf.Tensor) -> tf.Tensor:
         n = tf.cast(new.shape[0], dtype=tf.float32)
         m = self.momentum
         lr = self.learning_rate
@@ -61,7 +63,7 @@ class BBRBM():
 
     def compute_hidden(self, x: tf.Tensor) -> tf.Tensor:
         """
-        Computes hidden state from the input.
+2        Computes hidden state from the input.
 
         :param x: tensor of shape (batch_size, n_visible)
         :return: tensor of shape (batch_size, n_hidden)
@@ -88,7 +90,7 @@ class BBRBM():
 
     def fit(
             self,
-            dataset: tf.data.Dataset,
+            dataset,
             epoches: int = 10,
             batch_size: int = 10
     ) -> List[float]:
@@ -100,12 +102,9 @@ class BBRBM():
         :param batch_size: batch size (default: 10)
         :return: list of batch errors
         """
-        assert epoches > 0, "Number of epoches must be positive"
-
-        errors = []
 
         for epoch in range(epoches):
-            self.logger.info('Starting epoch %d', epoch)
+            #           self.logger.info('Starting epoch %d', epoch)
 
             epoch_err_sum = 0.0
             epoch_err_num = 0
@@ -206,3 +205,66 @@ class GBRBM(BBRBM):
         self.hidden_bias.assign_add(self.delta_hidden_bias)
 
         return tf.reduce_mean(tf.square(x - visible_recon_p))
+
+def transform_dataset(model, dataset):
+    transformed_batches = []
+    
+    for batch in dataset.batch(2048):
+        transformed_batches.append(model.compute_hidden(batch))
+    return tf.data.Dataset.from_tensor_slices(tf.concat(transformed_batches, axis=0))
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    (x_train, x_cross), (x_test) = mf.ecg_filtering(True)
+    print(x_train)
+    print(x_test)
+    dataset = tf.data.Dataset.from_tensor_slices(x_train)
+    dataset = dataset.shuffle(1024, reshuffle_each_iteration=True)
+
+    bbrbm_1 = BBRBM(n_visible=180, n_hidden=80)
+    bbrbm_2 = BBRBM(n_visible=200, n_hidden=100)
+    bbrbm_3 = BBRBM(n_visible=250, n_hidden=120)
+
+    gbrbm_1 = GBRBM(n_visible=180, n_hidden=80)
+    gbrbm_2 = GBRBM(n_visible=200, n_hidden=100)
+    gbrbm_3 = GBRBM(n_visible=250, n_hidden=120)
+
+    epchoes = 100
+    batch_size = 10
+
+    # first
+    bbrbm_1.fit(dataset, epoches=epchoes, batch_size=batch_size)
+    bbrbm_dataset_2 = transform_dataset(bbrbm_1, dataset)
+
+    gbrbm_1.fit(dataset, epoches=epchoes, batch_size=batch_size)
+    gbrbm_dataset_2 = transform_dataset(gbrbm_1, dataset)
+
+    # second
+    bbrbm_2.fit(dataset, epoches=epchoes, batch_size=batch_size)
+    bbrbm_dataset_3 = transform_dataset(bbrbm_2, dataset)
+
+    gbrbm_2.fit(dataset, epoches=epchoes, batch_size=batch_size)
+    gbrbm_dataset_3 = transform_dataset(gbrbm_2, dataset)
+
+    # third
+    bbrbm_3.fit(dataset, epoches=epchoes, batch_size=batch_size)
+    gbrbm_3.fit(dataset, epoches=epchoes, batch_size=batch_size)
+
+    def bbrbm_encode(x):
+        hidden_1 = bbrbm_1.compute_hidden(x)
+        hidden_2 = bbrbm_2.compute_hidden(hidden_1)
+        hidden_3 = bbrbm_3.compute_hidden(hidden_2)
+
+        return hidden_3
+
+    def gbrbm_encode(x):
+        hidden_1 = gbrbm_1.compute_hidden(x)
+        hidden_2 = gbrbm_2.compute_hidden(hidden_1)
+        hidden_3 = gbrbm_3.compute_hidden(hidden_2)
+        
+        return hidden_3
+
+    dataset_test = tf.data.Dataset.from_tensor_slices(x_test.reshape(-1, 28 * 28))
+
+if __name__ == '__main__':
+    main()
