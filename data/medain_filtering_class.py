@@ -1,4 +1,4 @@
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, filtfilt
 from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
@@ -20,8 +20,15 @@ result_db1_list = []
 result_db2_list = []
 result_db3_list = []
 
+final_db1_list = []
+final_db2_list = []
+final_db3_list = []
+
 # Slicing memory list
 temp_list = []
+
+# Butter list
+butter_list = []
 
 outfile = TemporaryFile()
 run_code_from = bool()
@@ -29,12 +36,23 @@ run_code_from = bool()
 #######################
 #    Low-pass filter  #
 #######################
-def butter_lowpass(cutoff, fs, butter_data, order=12):
+def butter_lowpass(cutoff, butter_data, fs=35, order=12):
+    # nyq = 0.5 * fs
+    # normal_cutoff = cutoff / nyq
+    # print(len(butter_data))
+    # b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    # for i in range(600):
+    #     print(butter_data[i])
+    #     butter_list.append(lfilter(b, a, butter_data[i]))
+    # return butter_list
+    
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    y = lfilter(b, a, butter_data)
-    return y
+
+    butter_list.append(filtfilt(b, a, butter_data))
+    return butter_list
+
 
 ########################
 #  Renaming data path  #
@@ -51,17 +69,18 @@ def data_path_flex(run_code_from):
 def slice_ecg_data(current_index, future_index, input_array):
     temp_list.clear()
     for i in range(current_index, future_index):
+        if current_index >= len(input_array) or len(input_array) <= future_index:
+            break
+        
         temp_list.append(float(input_array[i]))
     return temp_list
 
 #######################
 #    List to tuple    #
 #######################
-def list_to_tuple(input_list):
-    input_list_to_tuple = tuple(itertools.chain(*input_list))
-    return input_list_to_tuple
-
-
+def list_to_list(input_list):
+    input_list_to_list = list(itertools.chain(*input_list))
+    return input_list_to_list
 
 #######################
 #      Main Code      #
@@ -106,8 +125,7 @@ def ecg_filtering(path_bool = False):
     for i in range(len(db2_file_list)):
         read_csv_path = DATA_PATH[FILE_FLAG_NUMBER] + db2_file_list[i]
         db2_csv = pd.read_csv(read_csv_path)
-        file_name_check = os.path.splitext(db2_file_list[i])[0]
-    
+
         try:
             mlii_list = list(db2_csv["'MLII'"])
             print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
@@ -130,7 +148,6 @@ def ecg_filtering(path_bool = False):
     for i in range(len(db2_file_list)):
         read_csv_path = DATA_PATH[FILE_FLAG_NUMBER] + db3_file_list[i]
         db3_csv = pd.read_csv(read_csv_path)
-        file_name_check = os.path.splitext(db3_file_list[i])[0]
     
         try:
             ecg_list = list(db3_csv["'ECG1'"])
@@ -139,14 +156,70 @@ def ecg_filtering(path_bool = False):
     
         except KeyError:
             continue
-        
+
         now_index += 200
         post_index += 200
+
+    now_index = 0
+    post_index = 600
+    
+    ######################################################
+    # 600ms width median MIT-BIH Dataset 1 that filtered #
+    ######################################################
+    FILE_FLAG_NUMBER = 0
+    print("[INFO]\tfinal_db1 direcotry found.")
+    print("......\t...................i\tCurrent_Index\tFrom_Index")
+    
+    db1_list = list_to_list(result_db1_list)
+    for i in range(len(db1_list)):
+        print("[IWIP]\tfinal_db1 reading...", i, now_index, post_index)
+        # final_db1_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, result_db1_list[i]))))
+        final_db1_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db1_list))))
+        now_index += 600
+        post_index += 600
+    
+    now_index = 0
+    post_index = 600
+    
+    ######################################################
+    # 600ms width median MIT-BIH Dataset 2 that filtered #
+    ######################################################
+    FILE_FLAG_NUMBER = 1
+    print("[INFO]\tfinal_db2 direcotry found.")
+    print("....\t...................i Current_Index From_Index")
+    
+    db2_list = list_to_list(result_db2_list)
+    for i in range(len(db2_list)):
+        print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
+        final_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db2_list))))
+        now_index += 600
+        post_index += 600
+    
+    now_index = 0
+    post_index = 600
+    
+    ######################################################
+    # 600ms width median MIT-BIH Dataset 3 that filtered #
+    ######################################################
+    FILE_FLAG_NUMBER = 2
+    print("[INFO]\tfinal_db3 direcotry found.")
+    print("....\t...................i Current_Index From_Index")
+
+    db3_list = list_to_list(result_db3_list)
+    for i in range(len(db3_list)):
+        print("[IWIP]\tfinal_db3 reading...", i, now_index, post_index)
+        final_db3_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db3_list))))
+        now_index += 600
+        post_index += 600
     
     '''Okay,
     200ms-width-median filtering is over...maybe.
     And now we going to do 600ms-width median filtering from 200ms-width median filter'''
     
+    # low_passed_db1 = sp.medfilt(final_db1_list, 12)
+    print(final_db1_list[0])
+    low_passed_db1 = butter_lowpass(3.667, final_db1_list[0])
+    print(low_passed_db1)
     print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
-    return ((result_db1_list), (result_db2_list)), (result_db3_list)
+    return (tuple(final_db1_list[0]), tuple(final_db2_list[0])), (tuple(final_db3_list[0]))
     
