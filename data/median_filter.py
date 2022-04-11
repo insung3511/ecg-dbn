@@ -7,13 +7,15 @@ import os
 print("[INFO] Dataset setting up start...")
 DATA_PATH = ['./final_db1/', './final_db2/', './final_db3/']
 PATH_NUMBER = None
-#DATA_PATH = './final_db3/rdsamp_svdb800.csv'
+
 db1_file_list = []
 db2_file_list = []
 svdb_file_list = []
+
 previous_index = 0
 current_index = 0
 future_index = 200
+
 temp_list = []
 
 db1_filtered_list = []
@@ -84,12 +86,3 @@ def median_200ms(path_number):
         future_index += 200
 
 median_200ms(0)
-# median_200ms(, None)
-
-# for i in range(0, len(og_df)):
-#     if current_index >= len(og_df):
-#         break
-#     print(">>>>>>>>", i, current_index, future_index)
-#     print(sp.medfilt(slice_ecg_data(current_index, future_index, ecg_v1)), '\n###')
-#     current_index += 200
-#     future_index += 200

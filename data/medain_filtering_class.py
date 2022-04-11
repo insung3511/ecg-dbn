@@ -1,9 +1,11 @@
+from xml.dom import NotFoundErr
 from scipy.signal import butter, lfilter, filtfilt
 from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
 import numpy as np
 import itertools
+import csv
 import os
 
 # FILE_FLAG_1, FILE_FLAG_2 = False
@@ -216,10 +218,38 @@ def ecg_filtering(path_bool = False):
     200ms-width-median filtering is over...maybe.
     And now we going to do 600ms-width median filtering from 200ms-width median filter'''
     
-    # low_passed_db1 = sp.medfilt(final_db1_list, 12)
-    print(final_db1_list[0])
     low_passed_db1 = butter_lowpass(3.667, final_db1_list[0])
-    print(low_passed_db1)
-    print("[DONE] AHHHHHHHHHHHHHHHHHHHHHHHHHHH FUCK")
-    return (tuple(final_db1_list[0]), tuple(final_db2_list[0])), (tuple(final_db3_list[0]))
+    print("[DONE] Pre-processing is done.")
     
+    # np.savez("outfile.npz", (final_db1_list[0], final_db2_list[0]), (final_db2_list[0], final_db3_list[0]))
+
+    print(len(final_db1_list[0]))
+    print(len(final_db2_list[0]))
+    print(len(final_db3_list[0]))
+    
+    try:        
+        # final_csv_dict = {
+        #     'dataset_1' : final_db1_list[0],
+        #     'dataset_2' : final_db2_list[0],
+        #     'dataset_3' : final_db3_list[0]
+        # }
+        final_csv_dict = {
+            'result' : low_passed_db1[0]
+        }
+
+        df_f = pd.DataFrame(final_csv_dict)
+        df_f.to_csv('outfile_filtered.csv')
+
+        og_csv_dict = {
+            'MLII' : mlii_list,
+            'ECG' : ecg_list
+        }
+
+        df_og = pd.DataFrame(og_csv_dict)
+        df_og.to_csv('outfile_original.csv')
+
+        return 0
+    
+    except ValueError:
+        print("[ERRR] Got a issue with create file")    
+        return 1
