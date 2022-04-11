@@ -39,15 +39,6 @@ run_code_from = bool()
 #    Low-pass filter  #
 #######################
 def butter_lowpass(cutoff, butter_data, fs=35, order=12):
-    # nyq = 0.5 * fs
-    # normal_cutoff = cutoff / nyq
-    # print(len(butter_data))
-    # b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    # for i in range(600):
-    #     print(butter_data[i])
-    #     butter_list.append(lfilter(b, a, butter_data[i]))
-    # return butter_list
-    
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -219,6 +210,8 @@ def ecg_filtering(path_bool = False):
     And now we going to do 600ms-width median filtering from 200ms-width median filter'''
     
     low_passed_db1 = butter_lowpass(3.667, final_db1_list[0])
+    low_passed_db2 = butter_lowpass(3.667, final_db2_list[0])
+    low_passed_db3 = butter_lowpass(3.667, final_db3_list[0])
     print("[DONE] Pre-processing is done.")
     
     # np.savez("outfile.npz", (final_db1_list[0], final_db2_list[0]), (final_db2_list[0], final_db3_list[0]))
@@ -248,8 +241,9 @@ def ecg_filtering(path_bool = False):
         df_og = pd.DataFrame(og_csv_dict)
         df_og.to_csv('outfile_original.csv')
 
-        return 0
+        return low_passed_db1, low_passed_db2, low_passed_db3
     
     except ValueError:
         print("[ERRR] Got a issue with create file")    
-        return 1
+        
+        return low_passed_db1, low_passed_db2, low_passed_db3
