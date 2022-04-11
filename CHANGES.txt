@@ -3,6 +3,7 @@ Apr. 11. 2022 (B. InSung)
 - 모델에 신호 넣기
     - medain_filtering_class 에서 바로 list로 넘김
     - 기존 코드 일부 제거 (파일 정리)
+- 신호 처리 후 tensorflow 내에서 모델 구성에서의 데이터 타입 문제 발생
 
 Apr. 10. 2022 (B. InSung)
 - 논문에서 말하는 모델 방식에 수정 필요.

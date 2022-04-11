@@ -1,3 +1,4 @@
+from torch import int64
 from tfrbm.util import xavier_init, sample_bernoulli, sample_gaussian
 import data.medain_filtering_class as mf
 from matplotlib.pyplot import axis
@@ -120,31 +121,25 @@ if __name__ == '__main__':
     LEARNING_RATE = 0.2
     ANNEALING_RATE = 0.999
     
-    # path = tf.keras.utils.get_file('outfile.npz')
-    # print(bool(path))
-    # # with np.load(path) as data:
-
     print("[MODL] Model main code is starting....")
     logging.basicConfig(level=logging.INFO)
 
     print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
 
-    # dataset = (pd.read_csv('outfile_filtered.csv')).values.tolist()
-    # dataset = dataset.values.tolist()
     
     dataset_db1, dataset_db2, dataset_db3 = mf.ecg_filtering(True)
     dataset_for_train = mf.list_to_list(dataset_db1 + dataset_db2)
     dataset_for_test = mf.list_to_list(dataset_db2 + dataset_db3)
-    # train_dataset_db1 = tf.data.Dataset.from_tensor_slices(dataset_db1)
-    # train_dataset_db2 = tf.data.Dataset.from_tensor_slices(dataset_db2)
-    # train_dataset_db3 = tf.data.Dataset.from_tensor_slices(dataset_db3)
-
-    # train_feature = tf.data.Dataset.from_generator(dataset_for_train)
-    # test_feature = tf.data.Dataset.from_generator(dataset_for_test)
-    # print(list(train_feature.as_numpy_iterator()))
-
     
-    train_dataset = tf.data.Dataset.from_tensor_slices(dataset_for_train)
+    # dataset_for_train = [int(i) * 1000000000000000000 for i in dataset_for_train]
+    print(dataset_for_train)
+
+
+    # dataset_for_train = [100*(dataset_for_train[i]) for i in dataset_for_train]
+    dataset_for_train = tf.convert_to_tensor(dataset_for_train)
+
+    # train_dataset = tf.data.Dataset.from_tensor_slices(dataset_for_train)
+    # print(train_dataset)
     # dataset = dataset.shuffle(1024, reshuffle_each_iteration=True)
 
     bbrbm_1 = BBRBM(n_visible=180, n_hidden=80)
@@ -159,7 +154,7 @@ if __name__ == '__main__':
     batch_size = 10
 
     # first
-    bbrbm_1.fit(train_dataset)
+    bbrbm_1.fit(dataset_for_train)
     # bbrbm_dataset_2 = transform_dataset(bbrbm_1, train_feature)
 
     # gbrbm_1.fit(dataset, epoches=epchoes, batch_size=batch_size)
