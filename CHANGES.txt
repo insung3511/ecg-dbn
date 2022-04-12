@@ -1,3 +1,8 @@
+Apr. 12. 2022 (B. InSung)
+- 모델에 데이터 입력에서 아직 문제 발생
+    - 에러내용 : tensorflow.python.framework.errors_impl.InvalidArgumentError: cannot compute MatMul as input #1(zero-based) was expected to be a double tensor but is a float tensor [Op:MatMul]
+      -> float 비트 형식에 관한 이슈로 예상이 됨. 
+
 Apr. 11. 2022 (B. InSung)
 - 데이터 신호 처리 문제 발견. 수정 진행 중. [SOLVED]
 - 모델에 신호 넣기

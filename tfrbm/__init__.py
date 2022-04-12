@@ -1,5 +1,5 @@
-from .bbrbm import BBRBM
-from .gbrbm import GBRBM
+from model import BBRBM
+from model import GBRBM
 
 # default RBM
 RBM = BBRBM

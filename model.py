@@ -1,14 +1,10 @@
-from torch import int64
 from tfrbm.util import xavier_init, sample_bernoulli, sample_gaussian
 import data.medain_filtering_class as mf
-from matplotlib.pyplot import axis
-from typing import Dict, List
+from tfrbm.rbm import RBM
+from numpy import float64
 import tensorflow as tf
-from tfrbm import RBM
-import pandas as pd
 import numpy as np
 import logging
-import abc
 
 class BBRBM(RBM):
     def __init__(self, *args, **kwargs):
@@ -75,7 +71,7 @@ class GBRBM(BBRBM):
 
         super().__init__(n_visible, n_hidden, **kwargs)
 
-    def step(self, x: tf.Tensor) -> tf.Tensor:
+    def step(self, x: tf.Tensor):
         hidden_p = tf.nn.sigmoid(tf.matmul(x, self.w) + self.hidden_bias)
         visible_recon_p = tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias
 
@@ -126,14 +122,12 @@ if __name__ == '__main__':
 
     print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
 
-    
     dataset_db1, dataset_db2, dataset_db3 = mf.ecg_filtering(True)
-    dataset_for_train = mf.list_to_list(dataset_db1 + dataset_db2)
-    dataset_for_test = mf.list_to_list(dataset_db2 + dataset_db3)
+    dataset_for_train = np.array(mf.list_to_list(dataset_db1 + dataset_db2), dtype=float64)
+    dataset_for_test = np.array(mf.list_to_list(dataset_db2 + dataset_db3), dtype=float64)
     
     # dataset_for_train = [int(i) * 1000000000000000000 for i in dataset_for_train]
     print(dataset_for_train)
-
 
     # dataset_for_train = [100*(dataset_for_train[i]) for i in dataset_for_train]
     dataset_for_train = tf.convert_to_tensor(dataset_for_train)
