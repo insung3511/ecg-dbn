@@ -213,13 +213,7 @@ def ecg_filtering(path_bool = False):
     low_passed_db2 = butter_lowpass(3.667, final_db2_list[0])
     low_passed_db3 = butter_lowpass(3.667, final_db3_list[0])
     print("[DONE] Pre-processing is done.")
-    
-    # np.savez("outfile.npz", (final_db1_list[0], final_db2_list[0]), (final_db2_list[0], final_db3_list[0]))
 
-    print(len(final_db1_list[0]))
-    print(len(final_db2_list[0]))
-    print(len(final_db3_list[0]))
-    
     try:        
         # final_csv_dict = {
         #     'dataset_1' : final_db1_list[0],

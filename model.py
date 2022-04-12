@@ -1,115 +1,179 @@
-from tfrbm.util import xavier_init, sample_bernoulli, sample_gaussian
 import data.medain_filtering_class as mf
-from tfrbm.rbm import RBM
 from numpy import float64
 import tensorflow as tf
 import numpy as np
 import logging
 
-class BBRBM(RBM):
-    def __init__(self, *args, **kwargs):
-        """
-        Initializes Bernoulli-Bernoulli RBM.
+class Batch(object):
+    def __init__(self, X, batch_size, y=None):
+        self.X = X
+        self.batch_size = batch_size
+        self.size = X.shape[0]
+        self.y = y
 
-        :param n_visible: number of visible neurons (input size)
-        :param n_hidden: number of hidden neurons
-        :param learning_rate: learning rate (default: 0.01)
-        :param momentum: momentum (default: 0.95)
-        :param xavier_const: constant used to initialize weights (default: 1.0)
-        """
-        super().__init__(*args, **kwargs)
+    def get_batch(self):
+        indices = np.random.choice(range(self.size), self.batch_size)
+        if self.y is None:
+            return self.X[indices, :]
+        return self.X[indices, :], self.y[indices, :]
 
-    def step(self, x: tf.Tensor) -> tf.Tensor:
-        hidden_p = tf.nn.sigmoid(tf.matmul(x, self.w) + self.hidden_bias)
-        visible_recon_p = tf.nn.sigmoid(tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias)
-        hidden_recon_p = tf.nn.sigmoid(tf.matmul(visible_recon_p, self.w) + self.hidden_bias)
+    def get_tensor_batch(self):
+        bt = self.get_batch()
+        return tf.stack(bt)
 
-        positive_grad = tf.matmul(tf.transpose(x), hidden_p)
-        negative_grad = tf.matmul(tf.transpose(visible_recon_p), hidden_recon_p)
+class RBM:
+    def __init__(self, n_visible, n_hidden, lr, epochs, batch_size=None):
+        '''
+        Initialize a model for an RBM with one layer of hidden units
+        :param n_visible: Number of visible nodes
+        :param n_hidden: Number of hidden nodes
+        :param lr: Learning rate for the CD algorithm
+        :param epochs: Number of iterations to run the algorithm for
+        :param batch_size: Split the training data
+        '''
+        self.n_hidden = n_hidden
+        self.n_visible = n_visible
+        self.lr = lr
 
-        self.delta_w = self._apply_momentum(
-            self.delta_w,
-            positive_grad - negative_grad
-        )
-        self.delta_visible_bias = self._apply_momentum(
-            self.delta_visible_bias,
-            tf.reduce_mean(x - visible_recon_p, 0)
-        )
-        self.delta_hidden_bias = self._apply_momentum(
-            self.delta_hidden_bias,
-            tf.reduce_mean(hidden_p - hidden_recon_p, 0)
-        )
+        self.epochs = epochs
+        self.batch_size = batch_size
 
-        self.w.assign_add(self.delta_w)
-        self.visible_bias.assign_add(self.delta_visible_bias)
-        self.hidden_bias.assign_add(self.delta_hidden_bias)
+def get_probabilities(layer, weights, val, bias):
+    '''
+    Find the probabilities associated with layer specified
+    :param layer: Hidden layer or visible layer, specified as string
+    :param weights: Tensorflow placeholder for weight matrix
+    :param val: Input units, hidden or visible as binary or float
+    :param bias: Bias associated with the computation, opposite of the input
+    :return: A tensor of probabilities associated with the layer specified
+    '''
+    if layer == 'hidden':
+        with tf.name_scope("Hidden_Probabilities"):
+            return tf.nn.sigmoid(tf.matmul(val, weights) + bias)
+    elif layer == 'visible':
+        with tf.name_scope("Visible_Probabilities"):
+            return tf.nn.sigmoid(tf.matmul(val, tf.transpose(weights)) + bias)
 
-        return tf.reduce_mean(tf.square(x - visible_recon_p))
 
-class GBRBM(BBRBM):
-    def __init__(
-            self,
-            n_visible: int,
-            n_hidden: int,
-            sample_visible: bool = False,
-            sigma: float = 1.0,
-            **kwargs
-    ):
-        """
-        Initializes Gaussian-Bernoulli RBM.
+def get_gaussian_probabilities(layer, weights, val, bias):
+    '''
+    Find the probabilities associated with layer specified
+    :param layer: Hidden layer or visible layer, specified as string
+    :param weights: Tensorflow placeholder for weight matrix
+    :param val: Input units, hidden or visible as binary or float
+    :param bias: Bias associated with the computation, opposite of the input
+    :return: A tensor of probabilities associated with the layer specified
+    '''
+    if layer == 'hidden':
+        with tf.name_scope("Hidden_Probabilities"):
+            return tf.matmul(val, weights) + bias
+    elif layer == 'visible':
+        with tf.name_scope("Visible_Probabilities"):
+            return tf.nn.sigmoid(tf.matmul(val, tf.transpose(weights)) + bias)
 
-        :param n_visible: number of visible neurons (input size)
-        :param n_hidden: number of hidden neurons
-        :param sample_visible: if reconstructed state should be sampled from the Gaussian distribution (default: False)
-        :param sigma: standard deviation of this distribution, does nothing when sample_visible = False (default: 1.0)
-        :param learning_rate: learning rate (default: 0.01)
-        :param momentum: momentum (default: 0.95)
-        :param xavier_const: constant used to initialize weights (default: 1.0)
-        """
-        self.sample_visible = sample_visible
-        self.sigma = sigma
 
-        super().__init__(n_visible, n_hidden, **kwargs)
+def gibbs(steps, v, hb, vb, W):
+    '''
+    Use the Gibbs sampler for a network of hidden and visible units.
+    :param steps: Number of steps to run the algorithm
+    :param v: Input data
+    :param hb: Hidden Bias
+    :param vb: Visible bias
+    :param W: Weight matrix
+    :return: Returns a sampled version of the input
+    '''
+    with tf.name_scope("Gibbs_sampling"):
+        for i in range(steps):
+            hidden_p = get_probabilities('hidden', W, v, hb)
+            h = sample(hidden_p)
 
-    def step(self, x: tf.Tensor):
-        hidden_p = tf.nn.sigmoid(tf.matmul(x, self.w) + self.hidden_bias)
-        visible_recon_p = tf.matmul(sample_bernoulli(hidden_p), tf.transpose(self.w)) + self.visible_bias
+            visible_p = get_probabilities('visible', W, h, vb)
+            v = visible_p
+            #v = sample(visible_p)
+        return visible_p
 
-        if self.sample_visible:
-            visible_recon_p = sample_gaussian(visible_recon_p, self.sigma)
 
-        hidden_recon_p = tf.nn.sigmoid(tf.matmul(visible_recon_p, self.w) + self.hidden_bias)
+def gibbs_gaussian(steps, v, hb, vb, W):
+    '''
+    Use the Gibbs sampler for a network of hidden and visible units.
+    :param steps: Number of steps to run the algorithm
+    :param v: Input data
+    :param hb: Hidden Bias
+    :param vb: Visible bias
+    :param W: Weight matrix
+    :return: Returns a sampled version of the input
+    '''
+    with tf.name_scope("Gibbs_sampling"):
+        for i in range(steps):
+            hidden_p = get_gaussian_probabilities('hidden', W, v, hb)
+            poshidstates = sample_gaussian(hidden_p)
 
-        positive_grad = tf.matmul(tf.transpose(x), hidden_p)
-        negative_grad = tf.matmul(tf.transpose(visible_recon_p), hidden_recon_p)
+            visible_p = get_gaussian_probabilities('visible', W, poshidstates, vb)
+            #v = sample_gaussian(visible_p)
+        return visible_p
 
-        self.delta_w = self._apply_momentum(
-            self.delta_w,
-            positive_grad - negative_grad
-        )
-        self.delta_visible_bias = self._apply_momentum(
-            self.delta_visible_bias,
-            tf.reduce_mean(x - visible_recon_p, 0)
-        )
-        self.delta_hidden_bias = self._apply_momentum(
-            self.delta_hidden_bias,
-            tf.reduce_mean(hidden_p - hidden_recon_p, 0)
-        )
 
-        self.w.assign_add(self.delta_w)
-        self.visible_bias.assign_add(self.delta_visible_bias)
-        self.hidden_bias.assign_add(self.delta_hidden_bias)
+def sample(probabilities):
+    '''
+    Sample a tensor based on the probabilities
+    :param probabilities: A tensor of probabilities given by 'rbm.get_probabilities'
+    :return: A sampled sampled tensor
+    '''
+    return tf.floor(probabilities + tf.random_uniform(tf.shape(probabilities), 0, 1))
 
-        return tf.reduce_mean(tf.square(x - visible_recon_p))
 
-'''START OF INDEPENDENT CODE'''
+def sample_gaussian(probabilities, stddev=1):
+    '''
+        Create a tensor based on the probabilities by adding gaussian noise from the input
+        :param probabilities: A tensor of probabilities given by 'rbm.get_probabilities'
+        :return: The addition of noise to the original probabilities
+        '''
+    return tf.add(probabilities, tf.random_normal(tf.shape(probabilities), mean=0.0, stddev=stddev))
 
-# def transform_dataset(model, dataset):
-#     transformed_batches = []
-    
-#     for batch in dataset.batch(2048):
-#         transformed_batches.append(model.compute_hidden(batch))
-#     return tf.data.Dataset.from_tensor_slices(tf.concat(transformed_batches, axis=0))
+def free_energy(v, weights, vbias, hbias):
+    '''
+    Compute the free energy for  a visible state
+    :param v:
+    :param weights:
+    :param vbias:
+    :param hbias:
+    :return:
+    '''
+    vbias_term = tf.matmul(v, tf.transpose(vbias))
+    x_b = tf.matmul(v, weights) + hbias
+    hidden_term = tf.reduce_sum(tf.log(1 + tf.exp(x_b)))
+    return - hidden_term - vbias_term
+
+'''
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+####################
+'''
+
+class Batch(object):
+    def __init__(self, X, batch_size, y=None):
+        self.X = X
+        self.batch_size = batch_size
+        self.size = X.shape[0]
+        self.y = y
+
+    def get_batch(self):
+        indices = np.random.choice(range(self.size), self.batch_size)
+        if self.y is None:
+            return self.X[indices, :]
+        return self.X[indices, :], self.y[indices, :]
+
+    def get_tensor_batch(self):
+        bt = self.get_batch()
+        return tf.stack(bt)
+
 
 if __name__ == '__main__':
     BATCH_SIZE = 10
@@ -121,62 +185,22 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
-
     dataset_db1, dataset_db2, dataset_db3 = mf.ecg_filtering(True)
-    dataset_for_train = np.array(mf.list_to_list(dataset_db1 + dataset_db2), dtype=float64)
-    dataset_for_test = np.array(mf.list_to_list(dataset_db2 + dataset_db3), dtype=float64)
-    
-    # dataset_for_train = [int(i) * 1000000000000000000 for i in dataset_for_train]
-    print(dataset_for_train)
+    train_dataset = tuple(mf.list_to_list(dataset_db1 + dataset_db2))
+    test_dataset = tuple(mf.list_to_list(dataset_db2 + dataset_db3))
 
-    # dataset_for_train = [100*(dataset_for_train[i]) for i in dataset_for_train]
-    dataset_for_train = tf.convert_to_tensor(dataset_for_train)
+    train_data = np.array(train_dataset)
+    rbm_model = RBM(n_visible=180, n_hidden=80, lr = tf.compat.v1.constant(train_data, dtype=tf.float64), epochs=100, batch_size=10)
+    batch = Batch(X = train_data, batch_size = 10)
 
-    # train_dataset = tf.data.Dataset.from_tensor_slices(dataset_for_train)
-    # print(train_dataset)
-    # dataset = dataset.shuffle(1024, reshuffle_each_iteration=True)
+    #v = tf.placeholder(tf.float64, shape=[None, rbm_model.n_visible], name = "visible_layer")
+    v = tf.constant(train_data, name="visible_layer", dtype=tf.float64, shape=[None, rbm_model.n_visible])
+    size = tf.cast(tf.shape(v)[0], tf.float64)
 
-    bbrbm_1 = BBRBM(n_visible=180, n_hidden=80)
-    bbrbm_2 = BBRBM(n_visible=200, n_hidden=100)
-    bbrbm_3 = BBRBM(n_visible=250, n_hidden=120)
+    with tf.name_scope('Weights'):
+        W = tf.Variable(tf.random_normal([rbm_model.n_visible, rbm_model.n_hidden], mean=0., stddev=4 * np.sqrt(6. / (rbm_model.n_visible + rbm_model.n_hidden))), name="weights")
+        tf.summary.histogram('weights',W)
 
-    gbrbm_1 = GBRBM(n_visible=180, n_hidden=80)
-    gbrbm_2 = GBRBM(n_visible=200, n_hidden=100)
-    gbrbm_3 = GBRBM(n_visible=250, n_hidden=120)
-
-    epchoes = 100
-    batch_size = 10
-
-    # first
-    bbrbm_1.fit(dataset_for_train)
-    # bbrbm_dataset_2 = transform_dataset(bbrbm_1, train_feature)
-
-    # gbrbm_1.fit(dataset, epoches=epchoes, batch_size=batch_size)
-    # gbrbm_dataset_2 = transform_dataset(gbrbm_1, dataset)
-
-    # # second
-    # bbrbm_2.fit(dataset, epoches=epchoes, batch_size=batch_size)
-    # bbrbm_dataset_3 = transform_dataset(bbrbm_2, dataset)
-
-    # gbrbm_2.fit(dataset, epoches=epchoes, batch_size=batch_size)
-    # gbrbm_dataset_3 = transform_dataset(gbrbm_2, dataset)
-
-    # # third
-    # bbrbm_3.fit(dataset, epoches=epchoes, batch_size=batch_size)
-    # gbrbm_3.fit(dataset, epoches=epchoes, batch_size=batch_size)
-
-    # def bbrbm_encode(x):
-    #     hidden_1 = bbrbm_1.compute_hidden(x)
-    #     hidden_2 = bbrbm_2.compute_hidden(hidden_1)
-    #     hidden_3 = bbrbm_3.compute_hidden(hidden_2)
-
-    #     return hidden_3
-
-    # def gbrbm_encode(x):
-    #     hidden_1 = gbrbm_1.compute_hidden(x)
-    #     hidden_2 = gbrbm_2.compute_hidden(hidden_1)
-    #     hidden_3 = gbrbm_3.compute_hidden(hidden_2)
-        
-    #     return hidden_3
-
-    # dataset_test = tf.data.Dataset.from_tensor_slices(x_test.reshape(-1, 28 * 28))
+    # with tf.name_scope('Weights'):
+    #     W = tf.Variable(tf.random_normal)
+    # data = 
