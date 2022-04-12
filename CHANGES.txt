@@ -1,7 +1,8 @@
 Apr. 12. 2022 (B. InSung)
 - 모델에 데이터 입력에서 아직 문제 발생
-    - 오픈 모델 변경 -> https://github.com/patricieni/RBM-Tensorflow/blob/master/rbm/model/rbm.py
-    - Added. [Apr. 12. 2022. 19:37:40]
+    - 하다하다 빡쳐서 그냥 PyTorch로 변경.
+    - Matrix ISSUE!
+
 Apr. 11. 2022 (B. InSung)
 - 데이터 신호 처리 문제 발견. 수정 진행 중. [SOLVED]
 - 모델에 신호 넣기
