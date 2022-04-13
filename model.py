@@ -1,11 +1,12 @@
 import data.medain_filtering_class as mf
+from GBRBM import RBMGaussHid
+from BBRBM import RBMBer
 import torch.nn as nn
 import numpy as np
-from RBM import *
 import logging
 import torch
 
-BATCH_SIZE = 80
+BATCH_SIZE = 10
 EPOCH = 100
 LEARNING_RATE = 0.2
 ANNEALING_RATE = 0.999
@@ -25,16 +26,18 @@ test_dataset = list(mf.list_to_list(dataset_db2 + dataset_db3))
 train_data = torch.FloatTensor(4 * train_dataset)
 test_data = torch.FloatTensor(4 * test_dataset)
 
+print("[INFO] Model object added")
 bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
 gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 batch_cnt = 0
-for i in range(int(train_data.shape[0])):
-    train_temp_data = torch.FloatTensor(train_dataset[batch_cnt:batch_cnt + BATCH_SIZE])
-    print(train_temp_data.size())
+for i in range(45):
+    train_temp_data = torch.FloatTensor(train_dataset[batch_cnt : batch_cnt + VISIBLE_UNITS])
+    batch_cnt += VISIBLE_UNITS
+    print(train_temp_data, i)
     
     error = bbrbm.cd(train_temp_data)
-    print("Reconstruction loss : %.3f" % (error.data[0]))
+    # print("Reconstruction loss : %.3f" % (error.data[0]))
 
 # bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
 
