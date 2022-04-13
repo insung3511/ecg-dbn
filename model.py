@@ -26,13 +26,14 @@ train_data = torch.FloatTensor(4 * train_dataset)
 test_data = torch.FloatTensor(4 * test_dataset)
 
 bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
+gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 batch_cnt = 0
 for i in range(int(train_data.shape[0])):
     train_temp_data = torch.FloatTensor(train_dataset[batch_cnt:batch_cnt + BATCH_SIZE])
     print(train_temp_data.size())
     
-    error = bbrbm.cd(v_data=train_temp_data)
+    error = bbrbm.cd(train_temp_data)
     print("Reconstruction loss : %.3f" % (error.data[0]))
 
 # bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)

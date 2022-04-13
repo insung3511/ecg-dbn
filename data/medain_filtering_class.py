@@ -137,14 +137,12 @@ def ecg_filtering(path_bool = False):
     print("[INFO]\tfinal_db3 direcotry found.")
     db3_file_list = os.listdir(DATA_PATH[FILE_FLAG_NUMBER])
     
-    print("....\t...................i Current_Index From_Index")
     for i in range(len(db2_file_list)):
         read_csv_path = DATA_PATH[FILE_FLAG_NUMBER] + db3_file_list[i]
         db3_csv = pd.read_csv(read_csv_path)
     
         try:
             ecg_list = list(db3_csv["'ECG1'"])
-            print("[IWIP]\tfinal_db3 reading...", i, now_index, post_index)
             result_db3_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, ecg_list))))
     
         except KeyError:
@@ -161,12 +159,9 @@ def ecg_filtering(path_bool = False):
     ######################################################
     FILE_FLAG_NUMBER = 0
     print("[INFO]\tfinal_db1 direcotry found.")
-    print("......\t...................i\tCurrent_Index\tFrom_Index")
     
     db1_list = list_to_list(result_db1_list)
     for i in range(len(db1_list)):
-        print("[IWIP]\tfinal_db1 reading...", i, now_index, post_index)
-        # final_db1_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, result_db1_list[i]))))
         final_db1_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db1_list))))
         now_index += 600
         post_index += 600
@@ -179,11 +174,9 @@ def ecg_filtering(path_bool = False):
     ######################################################
     FILE_FLAG_NUMBER = 1
     print("[INFO]\tfinal_db2 direcotry found.")
-    print("....\t...................i Current_Index From_Index")
     
     db2_list = list_to_list(result_db2_list)
     for i in range(len(db2_list)):
-        print("[IWIP]\tfinal_db2 reading...", i, now_index, post_index)
         final_db2_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db2_list))))
         now_index += 600
         post_index += 600
@@ -196,11 +189,9 @@ def ecg_filtering(path_bool = False):
     ######################################################
     FILE_FLAG_NUMBER = 2
     print("[INFO]\tfinal_db3 direcotry found.")
-    print("....\t...................i Current_Index From_Index")
-
+    
     db3_list = list_to_list(result_db3_list)
     for i in range(len(db3_list)):
-        print("[IWIP]\tfinal_db3 reading...", i, now_index, post_index)
         final_db3_list.append(list(sp.medfilt(slice_ecg_data(now_index, post_index, db3_list))))
         now_index += 600
         post_index += 600
