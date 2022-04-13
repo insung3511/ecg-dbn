@@ -22,8 +22,8 @@ class RBM():
 
     # visible layer to hidden layer
     def sample_hidden(self, visible_probabilities):
-        # hidden_activations = torch.matmul(visible_probabilities, None) + self.hidden_bias
-        hidden_activations = self.hidden_bias + mix.MixtureSameFamily()
+        hidden_activations = torch.matmul(visible_probabilities, self.weights) + self.hidden_bias
+        # hidden_activations = self.hidden_bias + mix.MixtureSameFamily()
         hidden_probabilities = self._sigmoid(hidden_activations)
         return hidden_probabilities
 
