@@ -37,14 +37,3 @@ for i in range(45):
     print(train_temp_data, i)
     
     error = bbrbm.cd(train_temp_data)
-    # print("Reconstruction loss : %.3f" % (error.data[0]))
-
-# bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
-
-# # Got a issue with this problem
-# # train_data = torch.einsum('i,j->ij', list(torch.Tensor(80, 180)), train_data)
-# train_data = train_data.view(VISIBLE_UNITS, HIDDEN_UNITS)
-
-# for _ in range(BATCH_SIZE):
-#     error = bbrbm.cd(train_data)
-#     print("Reconstruction loss : %.3f" % (error.data[0]))
