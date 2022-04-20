@@ -12,11 +12,12 @@ class RBMBer(RBMBase):
     def sample_h_given_v(self, v):
         h_prob = self.p_h_given_v(v)
         r = torch.rand(self.hid_num)
-        print(torch.gt(h_prob, r).float())
+        print(type(torch.gt(h_prob, r).float()))
+        print(torch.gt(h_prob, r).float()))
         # print(((h_prob > r).float()))
         
         # Binary probability
-        return h_prob, (h_prob > r).float()
+        return h_prob, torch.gt(h_prob, r).float()
 
     def p_v_given_h(self, h):
         return torch.sigmoid(torch.matmul(self.w.t(), h) + self.a)
