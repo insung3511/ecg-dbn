@@ -3,6 +3,7 @@ Apr. 20. 2022 (B. InSung)
 - 기존 에러에서의 문제점 확인
     - BBRBM에서 sample_h_given_v 함수에서 (h_prob > r) 를 상수 형태로 리턴
         - torchdot 으로 환산되어 반환.
+        - src means "TORCH.TENSOR.SCATTER"
     - 이로 인해서 변형이 불가. h_prob 와 맞지 않는 형태
     - 허나 이 또한 아직까지 확실하지 않음. 지속적인 수정을 진행할 예정.
 
