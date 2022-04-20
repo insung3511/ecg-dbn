@@ -1,6 +1,3 @@
-import torch
-
-
 from RBM import RBMBase
 import torch
 
@@ -14,7 +11,8 @@ class RBMBer(RBMBase):
     def sample_h_given_v(self, v):
         h_prob = self.p_h_given_v(v)
         r = torch.rand(self.hid_num)
-        
+        print(((h_prob > r).float()), " | \n", h_prob)
+
         # Binary probability
         return (h_prob > r).float(), h_prob
 
