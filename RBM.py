@@ -9,6 +9,7 @@ Reference from https://github.com/xukai92/pytorch-rbm/blob/ea88786dc8352dae59a4e
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
+import numpy as np
 
 class RBMBase:
     def __init__(self, vis_num, hid_num):
@@ -55,8 +56,8 @@ class RBMBase:
         """
 
         # Positive phase
+    #   tensor, tensor(but change it to src)
         h_pos, h_prob_pos = self.sample_h_given_v(v_data)
-
         # Negative phase
         h_neg = h_pos.clone()
 
@@ -67,7 +68,9 @@ class RBMBase:
         # Compute statistics
                 #   tensor            matrix
         # print(type(h_prob_pos), type(v_data))
-        stats_pos = torch.matmul(h_prob_pos, v_data)
+        stats_pos = torch.tensor(np.matmul(v_data, h_prob_pos))
+        print(type(stats_pos))
+        # stats_pos = torch.matmul(h_prob_pos, v_data)
         stats_neg = torch.matmul(v_prob_neg.t(), h_prob_neg)
         
         # Compute gradients

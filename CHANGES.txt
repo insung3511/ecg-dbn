@@ -1,3 +1,8 @@
+Apr. 21. 2022 (B. InSung)
+- Torch.scatter 함수를 통해서 2D Tensor를 1D Tensor로 변환
+- 막상 생각해보닌까 진짜 문제는 따로 있었음.
+    - 80과 180, 1D로 되어 있는걸 Matmul 이 가능한가? 안되지 않나?
+
 Apr. 20. 2022 (B. InSung)
 - Tada... I'm back.
 - 기존 에러에서의 문제점 확인
