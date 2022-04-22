@@ -1,3 +1,0 @@
-WFDB=". ${HOME}/database /Users/bahk_insung/SHIT_OR_FUCK/FUCK-Develop/dbn-ecg/wfdb-10.6.2/build/database /cdrom http://www.physionet.org/physiobank/database"; export WFDB
-: Change www.physionet.org above to your favorite mirror if you wish
-WFDBCAL=wfdbcal; export WFDBCAL
