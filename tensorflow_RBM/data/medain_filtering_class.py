@@ -4,6 +4,9 @@ from tempfile import TemporaryFile
 from scipy import signal as sp
 import pandas as pd
 import numpy as np
+import os.path
+from os import path
+import random
 import itertools
 import csv
 import os
@@ -78,7 +81,8 @@ def list_to_list(input_list):
 #######################
 #      Main Code      #
 #######################
-def ecg_filtering(path_bool = False):
+def ecg_filtering(path_bool = False, save_now = True):
+    DATA_PATH = DATA_PATH_OG
     if path_bool == True:
         DATA_PATH = data_path_flex(path_bool)
 
@@ -86,12 +90,22 @@ def ecg_filtering(path_bool = False):
     file_dir_list = os.listdir('.')
     now_index = 0
     post_index = 200
-    
+
+    print("[INFO] File Exist Checked")
+    try:
+        random_path_index = random.randint(1, len(DATA_PATH))
+        path.exists(DATA_PATH[random_path_index])
+        print("[INFO] File Exist. Say \"Thanks lord...\"")
+    except FileNotFoundError:
+        print("\t[ERRR] Cannot found the file. Please check again.")
+        exit(1004)
+
     ########################################
     # 200ms width median MIT-BIH Dataset 1 #
     ########################################
     FILE_FLAG_NUMBER = 0
     print("[INFO]\tfinal_db1 direcotry found.")
+
     db1_file_list = os.listdir(DATA_PATH[FILE_FLAG_NUMBER])
     
     print("......\t...................i\tCurrent_Index\tFrom_Index")
@@ -205,19 +219,42 @@ def ecg_filtering(path_bool = False):
     low_passed_db3 = butter_lowpass(3.667, final_db3_list[0])
     print("[DONE] Pre-processing is done.")
 
-    try:        
-        # final_csv_dict = {
-        #     'dataset_1' : final_db1_list[0],
-        #     'dataset_2' : final_db2_list[0],
-        #     'dataset_3' : final_db3_list[0]
-        # }
+    if (save_now == True):
+        og_csv_dict = og_csv_dict
+        try:        
+            # final_csv_dict = {
+            #     'dataset_1' : final_db1_list[0],
+            #     'dataset_2' : final_db2_list[0],
+            #     'dataset_3' : final_db3_list[0]
+            # }
+            final_csv_dict = {
+                'result' : low_passed_db1[0]
+            }
+
+            df_f = pd.DataFrame(final_csv_dict)
+            df_f.to_csv('outfile_filtered.csv')
+
+            og_csv_dict = {
+                'MLII' : mlii_list,
+                'ECG' : ecg_list
+            }
+
+            df_og = pd.DataFrame(og_csv_dict)
+            df_og.to_csv('outfile_original.csv')
+
+            return low_passed_db1, low_passed_db2, low_passed_db3
+        
+        except ValueError:
+            print("[ERRR] Got a issue with create file")    
+            
+            return low_passed_db1, low_passed_db2, low_passed_db3
+    else:
         final_csv_dict = {
             'result' : low_passed_db1[0]
         }
 
         df_f = pd.DataFrame(final_csv_dict)
         df_f.to_csv('outfile_filtered.csv')
-
         og_csv_dict = {
             'MLII' : mlii_list,
             'ECG' : ecg_list
@@ -225,10 +262,5 @@ def ecg_filtering(path_bool = False):
 
         df_og = pd.DataFrame(og_csv_dict)
         df_og.to_csv('outfile_original.csv')
-
         return low_passed_db1, low_passed_db2, low_passed_db3
     
-    except ValueError:
-        print("[ERRR] Got a issue with create file")    
-        
-        return low_passed_db1, low_passed_db2, low_passed_db3
