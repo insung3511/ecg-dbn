@@ -99,13 +99,15 @@ class RBMBase:
         # Update momentums
         # ISSUE PART
         # print((w_grad - lam) * torch.tensor(self.w))
+
+        self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
+        testing_tensor = torch.tensor(w_grad - lam).view(self.vis_num * self.hid_num)
+        print("Weight size : ", self.w.size(), " w - lam size : ", testing_tensor.size())
         
-        self.w = (self.w.clone()).view(self.vis_num)
-        print("Weight size : ", self.w.size(), " w - lam size : ", testing_tensor)
-        
-        testing_tensor = (w_grad - lam).view(self.hid_num)
+        self.w_v = (self.w_v.clone()).view(self.vis_num * self.hid_num)
 
         #         scalar |   var x  | scalar
+        #          ----ISSSSSSUUUUE
         self.w_v = alpha * self.w_v + eta * testing_tensor
         self.a_v = alpha * self.a_v + eta * a_grad
         self.b_v = alpha * self.b_v + eta * b_grad
