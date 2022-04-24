@@ -66,28 +66,25 @@ class RBMBase:
             h_neg, h_prob_neg = self.sample_h_given_v(v_prob_neg)
 
         # Compute statistics
-                #   tensor            matrix
-        # print(type(h_prob_pos), type(v_data))
-        # print(h_prob_pos, v_data)
-        #------------------------------------------INPUT---------DIM
-        #                     # Size  S  E
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
         v_data = v_data.unsqueeze(1)
         h_prob_pos = h_prob_pos.unsqueeze(0)
 
-        print(h_prob_pos.size(), index_tensor.size(), v_data.size())
-        print(torch.numel(h_prob_pos), torch.numel(v_data))
-        # print(v_data)
-        # print(h_prob_pos)
-
-        # Okay solved.
         stats_pos = torch.matmul(
             (v_data).scatter_(0, index_tensor, v_data.clone()), 
             h_prob_pos
         )
 
-        # And other issue part
-        stats_neg = torch.matmul(v_prob_neg.t(), h_prob_neg)
+        '''     GUIDE LINE    ''' 
+        
+        index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
+        v_prob_neg_t = (v_prob_neg.t()).unsqueeze(1)
+        h_prob_neg = h_prob_neg.unsqueeze(0)
+
+        stats_neg = torch.matmul(
+            v_prob_neg_t,
+            (h_prob_neg).scatter_(0, index_tensor, h_prob_neg.clone())
+        )
         
         # Compute gradients
         w_grad = (stats_pos - stats_neg) / batch_size

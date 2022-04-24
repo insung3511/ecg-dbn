@@ -1,7 +1,8 @@
 Apr. 24. 2022 (B. InSung)
-- Dimension을 맞춰주니 아래와 같은 에러 발생
-    - RuntimeError: mat1 and mat2 shapes cannot be multiplied (1x180 and 1x80)
-    - 문제의 부분은 동일하나, 데이터 타입 혹은 180과 80의 문제일 수도 있음. 파악 필요!
+- stats_pos, stats_neg 문제 해결
+    - 각각의 matmul을 위한 사이즈와 src (scatter 사이즈로 맞춰줌.) 이로 인해 문제해결
+    - 다른 문제 발생. 106번 줄 weight 에러 발생. 아래 내용은 아래에.
+        - UnboundLocalError: local variable 'batch_size' referenced before assignment
 
 Apr. 22. 2022 (B. InSung)
 - Torch 에서 같은 문제로 충돌하게 됨. 모종의 이유로 Tensorflow로 다시 시작해봄...
