@@ -37,7 +37,7 @@ batch_cnt = 0
 for i in range(92):
     train_temp_data = torch.FloatTensor(train_data[batch_cnt : batch_cnt + VISIBLE_UNITS])
     batch_cnt += VISIBLE_UNITS
-    print(train_temp_data, i)
+    print("Epoch : {}".format(i))
     error = bbrbm.cd(train_temp_data)
     
 # for i in range(23):

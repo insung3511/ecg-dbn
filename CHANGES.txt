@@ -4,6 +4,8 @@ Apr. 24. 2022 (B. InSung)
 - BBRBM p_h_given_v 함수 내에서 오류 발생
     - sigmoid 함수에 parameter로 넣으면서 맞지 않은 데이터 형식으로 오류남.
         - RuntimeError: shape '[14400]' is invalid for input of size 80
+    - v_i = v.clone().view(180 * 80)를 하면 180의 input은 존재, 허나 14400개를 채울게 없음
+    - 이로 인해 에러 발생. 고쳐야하는데... 멘탐 좀 나감.
 
 Apr. 22. 2022 (B. InSung)
 - Torch 에서 같은 문제로 충돌하게 됨. 모종의 이유로 Tensorflow로 다시 시작해봄...

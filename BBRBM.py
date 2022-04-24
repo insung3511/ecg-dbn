@@ -12,13 +12,13 @@ class RBMBer(RBMBase):
         w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone()))
         print(type(self.w.t()))
         
-        print(v.size(0))
-        v = (v.clone()).view(self.vis_num * self.hid_num)
-        print(type(v), v.size())
+        print(v.size())
+        v_i = (v.clone()).view(self.vis_num * self.hid_num)
+        print(type(v_i), v_i.size())
 
         return torch.sigmoid(
             torch.matmul(
-                v, 
+                v_i, 
                 w_t + self.b
             )
         )
@@ -26,10 +26,6 @@ class RBMBer(RBMBase):
     def sample_h_given_v(self, v):
         h_prob = self.p_h_given_v(v)
         r = torch.rand(self.hid_num)
-        # print(type(torch.gt(h_prob, r).float()))
-        # print((torch.gt(h_prob, r).float(), 1).scatter_())
-        # print(((h_prob > r).float()))
-        # print(h_prob_bool.scatter_(0, index, h_prob_bool.clone()))
 
         # Binary probability
         return h_prob, (h_prob > r).float()
