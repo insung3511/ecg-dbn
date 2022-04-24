@@ -6,10 +6,14 @@ University of Edinburgh, 2017
 
 Reference from https://github.com/xukai92/pytorch-rbm/blob/ea88786dc8352dae59a4e306ad8fe4d274e13c14/rbm.py
 """
+from matplotlib import testing
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
 import numpy as np
+
+def numel(tensor):
+    return torch.numel(tensor)
 
 class RBMBase:
     def __init__(self, vis_num, hid_num):
@@ -56,8 +60,8 @@ class RBMBase:
         """
 
         # Positive phase
-    #   tensor, tensor(but change it to src)
         h_pos, h_prob_pos = self.sample_h_given_v(v_data)
+
         # Negative phase
         h_neg = h_pos.clone()
 
@@ -76,7 +80,7 @@ class RBMBase:
         )
 
         '''     GUIDE LINE    ''' 
-        
+
         index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
         v_prob_neg_t = (v_prob_neg.t()).unsqueeze(1)
         h_prob_neg = h_prob_neg.unsqueeze(0)
@@ -87,13 +91,22 @@ class RBMBase:
         )
         
         # Compute gradients
-        w_grad = (stats_pos - stats_neg) / batch_size
         batch_size = v_data.size()[0]
+        w_grad = (stats_pos - stats_neg) / batch_size
         a_grad = torch.sum(v_data - v_prob_neg, 0) / batch_size
         b_grad = torch.sum(h_prob_pos - h_prob_neg, 0) / batch_size
 
         # Update momentums
-        self.w_v = alpha * self.w_v + eta * (w_grad - lam * self.w)
+        # ISSUE PART
+        # print((w_grad - lam) * torch.tensor(self.w))
+        
+        self.w = (self.w.clone()).view(self.vis_num)
+        print("Weight size : ", self.w.size(), " w - lam size : ", testing_tensor)
+        
+        testing_tensor = (w_grad - lam).view(self.hid_num)
+
+        #         scalar |   var x  | scalar
+        self.w_v = alpha * self.w_v + eta * testing_tensor
         self.a_v = alpha * self.a_v + eta * a_grad
         self.b_v = alpha * self.b_v + eta * b_grad
 

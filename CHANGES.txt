@@ -1,8 +1,8 @@
 Apr. 24. 2022 (B. InSung)
 - stats_pos, stats_neg 문제 해결
     - 각각의 matmul을 위한 사이즈와 src (scatter 사이즈로 맞춰줌.) 이로 인해 문제해결
-    - 다른 문제 발생. 106번 줄 weight 에러 발생. 아래 내용은 아래에.
-        - UnboundLocalError: local variable 'batch_size' referenced before assignment
+- weight setting problem
+    - weight의 크기를 맞추던 중에 (w_grad - lam) 과 w 의 데이터 크기 차이로 인한 문제 발생.
 
 Apr. 22. 2022 (B. InSung)
 - Torch 에서 같은 문제로 충돌하게 됨. 모종의 이유로 Tensorflow로 다시 시작해봄...
