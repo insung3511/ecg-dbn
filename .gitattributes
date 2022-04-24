@@ -1,9 +1,4 @@
-data filter=lfs diff=lfs merge=lfs -text
-0201_rdann.csv filter=lfs diff=lfs merge=lfs -text
-0001_rdann.csv filter=lfs diff=lfs merge=lfs -text
-record_all filter=lfs diff=lfs merge=lfs -text
-record_all.zip filter=lfs diff=lfs merge=lfs -text
-RBM.py filter=lfs diff=lfs merge=lfs -text
-outfile_filtered.csv filter=lfs diff=lfs merge=lfs -text
 tensorflow_RBM filter=lfs diff=lfs merge=lfs -text
-CHANGES.txt filter=lfs diff=lfs merge=lfs -text
+record_all filter=lfs diff=lfs merge=lfs -text
+outfile_filtered.csv filter=lfs diff=lfs merge=lfs -text
+data filter=lfs diff=lfs merge=lfs -text
