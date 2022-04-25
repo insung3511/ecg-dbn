@@ -1,3 +1,11 @@
+DEADLINE!
+## 수요일까지 Train 시키고 Test 돌리기
+    ## 정확도 출력, Train set 모두 학습 후 DB3로 테스트 진행.
+
+Apr. 25. 2022 (B. InSung)
+- Monday Session Start!
+- BBRBM.py : w_t + self.b 에서 dimension 불일치 오류 발생
+
 Apr. 24. 2022 (B. InSung)
 - stats_pos, stats_neg 문제 해결
     - 각각의 matmul을 위한 사이즈와 src (scatter 사이즈로 맞춰줌.) 이로 인해 문제해결
