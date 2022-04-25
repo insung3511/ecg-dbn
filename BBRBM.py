@@ -10,17 +10,10 @@ class RBMBer(RBMBase):
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
         
         w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone()))
-        print(type(self.w.t()))
         
         v_i = (torch.ones(self.vis_num * self.hid_num))
         v_i = (v.clone().detach())
-        print(v_i)
 
-
-        # print(type(w_t), type(self.b))
-        print(w_t.size(), (self.b).size())
-
-        # ISSUE PART
         '''
         w_t dimension setting up results..
             0 : [1, 80, 180]
@@ -28,19 +21,9 @@ class RBMBer(RBMBase):
         '''
 
         w_t = w_t.unsqueeze(0)
-        print(((w_t + self.b)[:, -1, :]).size())
-        
-        # print(v_i.size())
-        # v_i = v_i.view([1, 180])
-        
-        w_t_b = (w_t + self.b).unsqueeze(0)
-        
-        print(w_t_b.size())
-        print(type(w_t + self.b), "\n ::::: \n", w_t + self.b)
         return torch.sigmoid(
             torch.matmul(
                 v_i, 
-                # w_t_b
                 w_t + self.b
             )
         )

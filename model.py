@@ -36,10 +36,8 @@ gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 batch_cnt = 0
 for i in range(92):
     train_temp_data = torch.FloatTensor(train_data[batch_cnt : batch_cnt + VISIBLE_UNITS])
+    print(len(train_temp_data))
+    
     batch_cnt += VISIBLE_UNITS
     print("Epoch : {}".format(i))
     error = bbrbm.cd(train_temp_data)
-    
-# for i in range(23):
-#     cross_temp_data = torch.FloatTensor(cross_data)
-#     error = bbrbm.cd(train_temp_data)

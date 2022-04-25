@@ -8,7 +8,9 @@ Apr. 25. 2022 (B. InSung)
 - BBRBM p_v_given_h 함수 오류 발생
     - RuntimeError: mat1 and mat2 shapes cannot be multiplied (80x180 and 1x180)
     - w_t + self.b 의 크기를 변경 예정. 1x180 -> 180x1
-- RuntimeError: shape '[14400]' is invalid for input of size 1152000
+- 기존 Tensor의 사이즈와 맞지 않음. 즉, Overflow와 같은 현상이 발생하게 되어서 이를 변경하는 쪽으로 가야함.
+- 기존 코드는 Epoch 0 에만 적합. 0 이후의 숫자 (1, 2, 3 ...) 에는 아직 고려 되지 않음. 아래는 해당 에러 본문.
+    - RuntimeError: shape '[14400]' is invalid for input of size 1152000
 
 Apr. 24. 2022 (B. InSung)
 - stats_pos, stats_neg 문제 해결
