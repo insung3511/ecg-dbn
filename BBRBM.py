@@ -54,6 +54,7 @@ class RBMBer(RBMBase):
 
     def p_v_given_h(self, h):
         index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
+        h = torch.tensor(h.scatter_(0, index_tensor, h.clone())).view(self.hid_num, 1)
         return torch.sigmoid(
             torch.matmul(
                 self.w.t(), 

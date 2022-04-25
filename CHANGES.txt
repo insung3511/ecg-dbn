@@ -5,6 +5,10 @@ DEADLINE!
 Apr. 25. 2022 (B. InSung)
 - Monday Session Start!
 - BBRBM.py : w_t + self.b 에서 dimension 불일치 오류 발생
+- BBRBM p_v_given_h 함수 오류 발생
+    - RuntimeError: mat1 and mat2 shapes cannot be multiplied (80x180 and 1x180)
+    - w_t + self.b 의 크기를 변경 예정. 1x180 -> 180x1
+- RuntimeError: shape '[14400]' is invalid for input of size 1152000
 
 Apr. 24. 2022 (B. InSung)
 - stats_pos, stats_neg 문제 해결
