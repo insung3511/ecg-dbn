@@ -61,7 +61,6 @@ class RBMBase:
             error: reconstruction error
         """
 
-        # v_data = torch.flatten(v_data.clone(), start_dim=FLATTEN_DIM)
         print("v_data size : ", v_data.size(), "\tv_data numel : ", torch.numel(v_data))
         
         # Positive phase

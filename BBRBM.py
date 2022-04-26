@@ -7,27 +7,27 @@ class RBMBer(RBMBase):
 
     def p_h_given_v(self, v):
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
+        w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone())).unsqueeze(1)
+        v = (v.clone()).view(1, self.vis_num)
+        print("w_t size\t\t: ", w_t.size(), "\tw_t numel\t\t: ", torch.numel(w_t))
+        print("v size\t\t: ", v.size(), "\tv numel\t\t: ", torch.numel(v))
         
-        print("w size : ", self.w.size(), "\tw numel : ", torch.numel(self.w))
-        print("OG!! w_t size : ", self.w.t().size(), "\tw_t numel : ", torch.numel(self.w.t()))
-
-        w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone()))
-        v_i = (torch.ones(self.vis_num * self.hid_num))
-        v_i = (v.clone().detach())
-
         '''
         w_t dimension setting up results..
             0 : [1, 80, 180]
             1 : [80, 1, 180]
         '''
-        print("w_t size : ", w_t.size(), "\tw_t numel : ", torch.numel(w_t))
-
-        w_t = w_t.unsqueeze(0)
+        
         return torch.sigmoid(
-            torch.matmul(v_i, w_t) + self.b         
+            torch.matmul(v, w_t) + self.b
         )
 
     def sample_h_given_v(self, v):
+        '''v
+        v is v_data that original data from model.py.
+        might be size is [80, 1].
+        '''
+
         h_prob = self.p_h_given_v(v)
         r = torch.rand(self.hid_num)
 

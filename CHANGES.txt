@@ -4,6 +4,29 @@ DEADLINE!
 
 Apr. 27. 2022 (B. InSung)
 - Wensday Session Start... but feels like Tuesday...
+- BBRBM sample_h_given_v 의 return 값 오류발생
+    - RuntimeError: mat1 and mat2 shapes cannot be multiplied (1x80 and 14400x14400)
+- 개발자 본인 지금 몬스터 마시고 밤샘을 달리는중.
+    - changes에 의미가 있을지 모르겠으니 일단 뭐라도 적는다. 지금 bbrbm에서 안되거든? 일단 어캐든 잘 고쳐보는데 v_data가 길이가 안 맞는거임. 그러니 그거 맞춰주셈.
+    - 14400 * 14400 으로 되어있다. 코드도 여기 있음
+```
+def p_h_given_v(self, v):
+        index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
+        w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone())).unsqueeze(1)
+        v = (v.clone()).view(1, self.vis_num)
+        print("w_t size\t\t: ", w_t.size(), "\tw_t numel\t\t: ", torch.numel(w_t))
+        print("v size\t\t: ", v.size(), "\tv numel\t\t: ", torch.numel(v))
+        
+        '''
+        w_t dimension setting up results..
+            0 : [1, 80, 180]
+            1 : [80, 1, 180]
+        '''
+        
+        return torch.sigmoid(
+            torch.matmul(v, w_t) + self.b
+        )
+```
 
 Apr. 26. 2022 (B. InSung)
 - Tuesday Session Start!
