@@ -2,6 +2,12 @@ DEADLINE!
 ## 수요일까지 Train 시키고 Test 돌리기
     ## 정확도 출력, Train set 모두 학습 후 DB3로 테스트 진행.
 
+Apr. 26. 2022 (B. InSung)
+- Tuesday Session Start!
+- Reconstruce 과정 중에 오류 발생
+    - RuntimeError: The size of tensor a (14400) must match the size of tensor b (1152000) at non-singleton dimension 0
+    - Dimension 이 맞지 않아 생기는 오류로 앞에서 연산된 testing_tensor의 크기가 3D로 되어 있어 이를 flatten으로 변환 중 오류 발생.
+
 Apr. 25. 2022 (B. InSung)
 - Monday Session Start!
 - BBRBM.py : w_t + self.b 에서 dimension 불일치 오류 발생

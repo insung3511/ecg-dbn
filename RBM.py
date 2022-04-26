@@ -97,28 +97,42 @@ class RBMBase:
         b_grad = torch.sum(h_prob_pos - h_prob_neg, 0) / batch_size
 
         # Update momentums
-        # ISSUE PART
-        # print((w_grad - lam) * torch.tensor(self.w))
-
         self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
 
-        # ISSUE PART
-        if (testing_tensor.size() == 14400):
-            testing_tensor = torch.tensor(w_grad - lam)
-            print("\t\t[LOOPED]Weight - lamba Tensor size : ", testing_tensor.size())
-        else:    
+        try:
+            print("\t\t\tWould you give some tuna?")
             testing_tensor = torch.tensor(w_grad - lam).view(self.vis_num * self.hid_num)
-            print("\t\t[FIRSTT]Weight - lamba Tensor size : ", testing_tensor.size())
         
-        self.w_v = (self.w_v.clone()).view(self.vis_num * self.hid_num)
+        except RuntimeError:
+            print("\t\t\t[TTRT] FUCK!!!!\a")
+            testing_tensor = torch.tensor(w_grad - lam)
+            print("\t\t[FIRSTT] Weight - lamba Tensor size : ", testing_tensor.size())
+
+        print((alpha * self.w_v).size())
 
         #         scalar |   var x  | scalar
-        #          ----ISSSSSSUUUUE
         self.w_v = alpha * self.w_v + eta * testing_tensor
         self.a_v = alpha * self.a_v + eta * a_grad
         self.b_v = alpha * self.b_v + eta * b_grad
 
         # Update parameters
+        #          ----ISSSSSSUUUUE
+        self.w_v = torch.flatten(self.w_v.clone(), start_dim=1)
+        
+        print(torch.numel(self.w_v))
+        
+        print("#!" * 20)
+
+        print(torch.numel(self.w))
+        print(self.w)
+        
+        try:
+            print(self.vis_num, " ****** ", self.hid_num)
+            self.w_v = ((self.w_v).clone()).view(self.vis_num * self.vis_num * self.hid_num)
+
+        except RuntimeError:
+            self.w_v = torch.flatten((self.w_v).clone(), start_dim=1)
+
         self.w = self.w + self.w_v
         self.a = self.a + self.a_v
         self.b = self.b + self.b_v
