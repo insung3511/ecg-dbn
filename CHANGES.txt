@@ -2,6 +2,9 @@ DEADLINE!
 ## 수요일까지 Train 시키고 Test 돌리기
     ## 정확도 출력, Train set 모두 학습 후 DB3로 테스트 진행.
 
+Apr. 27. 2022 (B. InSung)
+- Wensday Session Start... but feels like Tuesday...
+
 Apr. 26. 2022 (B. InSung)
 - Tuesday Session Start!
 - Reconstruce 과정 중에 오류 발생

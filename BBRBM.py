@@ -1,4 +1,3 @@
-from numpy import dtype
 from RBM import RBMBase
 import torch
 
@@ -8,6 +7,10 @@ class RBMBer(RBMBase):
 
     def p_h_given_v(self, v):
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
+        
+        print("w size : ", self.w.size(), "\tw numel : ", torch.numel(self.w))
+        print("OG!! w_t size : ", self.w.t().size(), "\tw_t numel : ", torch.numel(self.w.t()))
+
         w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone()))
         v_i = (torch.ones(self.vis_num * self.hid_num))
         v_i = (v.clone().detach())
@@ -17,12 +20,11 @@ class RBMBer(RBMBase):
             0 : [1, 80, 180]
             1 : [80, 1, 180]
         '''
+        print("w_t size : ", w_t.size(), "\tw_t numel : ", torch.numel(w_t))
+
         w_t = w_t.unsqueeze(0)
         return torch.sigmoid(
-            torch.matmul(
-                v_i,
-                w_t + self.b
-            )
+            torch.matmul(v_i, w_t) + self.b         
         )
 
     def sample_h_given_v(self, v):
