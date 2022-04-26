@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 BATCH_SIZE = 10
-EPOCH = 100
+EPOCH = 10
 LEARNING_RATE = 0.2
 ANNEALING_RATE = 0.999
 VISIBLE_UNITS = 80    
@@ -34,7 +34,10 @@ bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
 gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 batch_cnt = 0
-for i in range(92):
+for i in range(EPOCH):
+    train_temp_data = torch.ones(VISIBLE_UNITS)
+    print(train_temp_data)
+
     train_temp_data = torch.FloatTensor(train_data[batch_cnt : batch_cnt + VISIBLE_UNITS])
     
     batch_cnt += VISIBLE_UNITS
@@ -42,3 +45,4 @@ for i in range(92):
     error = bbrbm.cd(train_temp_data)
     
     del train_temp_data
+    # print("Reconstruction error: %.3f" % (error.data[0]))

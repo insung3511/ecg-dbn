@@ -47,6 +47,7 @@ class RBMBase:
         raise NotImplementedError()
 
     def cd(self, v_data, k, eta, alpha, lam):
+        self.w = nn.Parameter(torch.randn(self.hid_num, self.vis_num) * 0.1)
         """
         Perform contrastive divergence with k stpes, i.e. CD_k.
 
@@ -61,7 +62,7 @@ class RBMBase:
             error: reconstruction error
         """
 
-        print("v_data size : ", v_data.size(), "\tv_data numel : ", torch.numel(v_data))
+        # print("v_data size : ", v_data.size(), "\tv_data numel : ", torch.numel(v_data))
         
         # Positive phase
         h_pos, h_prob_pos = self.sample_h_given_v(v_data)
@@ -87,7 +88,7 @@ class RBMBase:
         )
 
         stats_pos = torch.flatten(stats_pos.clone(), start_dim=FLATTEN_DIM)
-        print("stats_pos size : ", stats_pos.size(), " \tstats_pos elemetns count : ", torch.numel(stats_pos))
+        # print("stats_pos size : ", stats_pos.size(), " \tstats_pos elemetns count : ", torch.numel(stats_pos))
 
         '''     STATS NEGATIVE    '''
 
@@ -102,7 +103,7 @@ class RBMBase:
         )
 
         stats_neg = torch.flatten(stats_neg.clone(), start_dim=FLATTEN_DIM)
-        print("stats_neg size : ", stats_neg.size(), " \tstats_neg elemetns count : ", torch.numel(stats_neg))
+        # print("stats_neg size : ", stats_neg.size(), " \tstats_neg elemetns count : ", torch.numel(stats_neg))
 
         # Compute gradients
         batch_size = v_data.size()[0]
@@ -111,28 +112,28 @@ class RBMBase:
         b_grad = torch.sum(h_prob_pos - h_prob_neg, 0) / batch_size
 
         w_grad = torch.flatten(w_grad.clone(), start_dim=FLATTEN_DIM)
-        print("w_grad size : ", w_grad.size(), "\tw_grad elemetns count : ", torch.numel(w_grad))
+        # print("w_grad size : ", w_grad.size(), "\tw_grad elemetns count : ", torch.numel(w_grad))
 
         # Update momentums
         self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
 
-        print("\t\t\tWould you give some mint chocolate?")
+        # print("\t\t\tWould you give some mint chocolate?")
 
         try:
-            print("\t\tYea, give that shit!")
+            # print("\t\tYea, give that shit!")
             testing_tensor = (w_grad.clone() - lam).view(self.vis_num * self.hid_num)
         
         except RuntimeError:
-            print("\t\tWakk... worst food ever...\a")
+            # print("\t\tWakk... worst food ever...\a")
             testing_tensor = w_grad.clone() - lam
         
         self.w_v = torch.flatten(self.w_v.clone(), start_dim=0)
-        print("self.w_v numel and size : \t\t", torch.numel(self.w_v), (self.w_v).size())
+        # print("self.w_v numel and size : \t\t", torch.numel(self.w_v), (self.w_v).size())
         
-        print("self.w numel and size : \t\t", torch.numel(self.w), (self.w).size())
+        # print("self.w numel and size : \t\t", torch.numel(self.w), (self.w).size())
         
 
-        print("\t[FIRSTT] \"testing_tensor\" Weight - lamba Tensor size : ", testing_tensor.size())
+        # print("\t[FIRSTT] \"testing_tensor\" Weight - lamba Tensor size : ", testing_tensor.size())
 
         # ISSUE MAIN PART
         #         scalar |   var x  | scalar
@@ -147,7 +148,7 @@ class RBMBase:
         # Update parameters     
         
         try:
-            print(self.vis_num, " ****** ", self.hid_num)
+            # print(self.vis_num, " ****** ", self.hid_num)
             self.w_v = ((self.w_v).clone()).view(self.vis_num * self.vis_num * self.hid_num)
 
         except RuntimeError:
@@ -158,13 +159,14 @@ class RBMBase:
         print((self.w).size())
 
         gc.collect()
-        print("\t\a[RAME] Starting update weights...")
+        # print("\t\a[RAME] Starting update weights...")
         self.w = self.w + self.w_v
-        print("\t\a[RAME] Updated weights!")
+        # print("\t\a[RAME] Updated weights!")
 
         self.a = self.a + self.a_v
         self.b = self.b + self.b_v
 
         # Compute reconstruction error
         error = F.mse_loss(v_data, v_prob_neg, size_average=False)
+        del self.w
         return error

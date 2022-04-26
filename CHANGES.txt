@@ -27,6 +27,14 @@ def p_h_given_v(self, v):
             torch.matmul(v, w_t) + self.b
         )
 ```
+        - 3:25:10의 박인성
+
+- okay. 3:39. Im still alive. log file becoming like survive diary...
+    - dear diary, here is so cold and hungry....그만하고, 현재 문제는 epoch = 0, 즉, 1번째 트레인 과정에서는 수월하게 넘어감.
+    - 두번째 (epoch = 1) 부터는 v data가 overload 발생. 에러 내용은 아래와 같음..
+        - RuntimeError: shape '[80, 180]' is invalid for input of size 207360000
+
+- Bernoulli-Bernoulli RBM First Train is success.
 
 Apr. 26. 2022 (B. InSung)
 - Tuesday Session Start!
