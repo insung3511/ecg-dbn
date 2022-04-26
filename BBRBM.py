@@ -8,9 +8,7 @@ class RBMBer(RBMBase):
 
     def p_h_given_v(self, v):
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
-        
         w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone()))
-        
         v_i = (torch.ones(self.vis_num * self.hid_num))
         v_i = (v.clone().detach())
 
@@ -19,11 +17,10 @@ class RBMBer(RBMBase):
             0 : [1, 80, 180]
             1 : [80, 1, 180]
         '''
-
         w_t = w_t.unsqueeze(0)
         return torch.sigmoid(
             torch.matmul(
-                v_i, 
+                v_i,
                 w_t + self.b
             )
         )
@@ -37,7 +34,7 @@ class RBMBer(RBMBase):
 
     def p_v_given_h(self, h):
         index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
-        h = torch.tensor(h.scatter_(0, index_tensor, h.clone())).view(self.hid_num, 1)
+        h = h.clone().detach().scatter_(0, index_tensor, h.clone().detach()).view(self.hid_num, 1)
         return torch.sigmoid(
             torch.matmul(
                 self.w.t(), 

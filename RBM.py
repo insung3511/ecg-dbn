@@ -23,10 +23,9 @@ class RBMBase:
         # Dictionary for storing parameters
         self.params = dict()
 
-        # self.w = torch.randn(vis_num, hid_num) * 0.1    # weight matrix
-        self.w = nn.Parameter(torch.randn(hid_num, vis_num) * 0.1)
-        self.a = torch.zeros(vis_num) / vis_num         # bias for visiable units
-        self.b = torch.zeros(hid_num)                   # bias for hidden units
+        self.w = nn.Parameter(torch.randn(hid_num, vis_num) * 0.1)  # weight matrix
+        self.a = torch.zeros(vis_num) / vis_num                     # bias for visiable units
+        self.b = torch.zeros(hid_num)                               # bias for hidden units
         
         # Corresponding momentums; _v means velocity of
         self.w_v = torch.zeros(vis_num, hid_num)
@@ -70,6 +69,7 @@ class RBMBase:
             h_neg, h_prob_neg = self.sample_h_given_v(v_prob_neg)
 
         # Compute statistics
+        # Postivie way (Visible to Hidden)
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
         v_data = v_data.unsqueeze(1)
         h_prob_pos = h_prob_pos.unsqueeze(0)
@@ -81,6 +81,7 @@ class RBMBase:
 
         '''     GUIDE LINE    ''' 
 
+        # Postivie way (Hidden to Visible)
         index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
         v_prob_neg_t = (v_prob_neg.t()).unsqueeze(1)
         h_prob_neg = h_prob_neg.unsqueeze(0)
@@ -99,16 +100,17 @@ class RBMBase:
         # Update momentums
         self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
 
+        print("\t\t\tWould you give some mint chocolate?")
+        
         try:
-            print("\t\t\tWould you give some tuna?")
-            testing_tensor = torch.tensor(w_grad - lam).view(self.vis_num * self.hid_num)
+            print("\t\tYea, give that shit!")
+            testing_tensor = (w_grad.clone() - lam).view(self.vis_num * self.hid_num)
         
         except RuntimeError:
-            print("\t\t\t[TTRT] FUCK!!!!\a")
-            testing_tensor = torch.tensor(w_grad - lam)
-            print("\t\t[FIRSTT] Weight - lamba Tensor size : ", testing_tensor.size())
-
-        print((alpha * self.w_v).size())
+            print("\t\tWakk... worst food ever...\a")
+            testing_tensor = w_grad.clone() - lam
+        
+        print("\t[FIRSTT] Weight - lamba Tensor size : ", testing_tensor.size())
 
         #         scalar |   var x  | scalar
         self.w_v = alpha * self.w_v + eta * testing_tensor
@@ -119,11 +121,8 @@ class RBMBase:
         #          ----ISSSSSSUUUUE
         self.w_v = torch.flatten(self.w_v.clone(), start_dim=1)
         
-        print(torch.numel(self.w_v))
-        
-        print("#!" * 20)
-
-        print(torch.numel(self.w))
+        print("self.w_v numel and size : \t\t", torch.numel(self.w_v), (self.w_v).size())
+        print("self.w numel and size : \t\t", torch.numel(self.w), (self.w).size())
         print(self.w)
         
         try:
@@ -132,6 +131,8 @@ class RBMBase:
 
         except RuntimeError:
             self.w_v = torch.flatten((self.w_v).clone(), start_dim=1)
+            self.w_v = ((self.w_v).clone()).unsqueeze(0)
+        self.w = ((self.w).clone()).unsqueeze(1)
 
         self.w = self.w + self.w_v
         self.a = self.a + self.a_v
