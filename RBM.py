@@ -142,8 +142,8 @@ class RBMBase:
         self.b_v = alpha * self.b_v + eta * b_grad
 
         
-        print(torch.numel(alpha * self.w_v))
-        print(torch.numel(eta * testing_tensor))
+        # print(torch.numel(alpha * self.w_v))
+        # print(torch.numel(eta * testing_tensor))
 
         # Update parameters     
         
@@ -156,7 +156,7 @@ class RBMBase:
             self.w_v = ((self.w_v).clone()).unsqueeze(0)
         self.w = ((self.w).clone()).unsqueeze(1)
 
-        print((self.w).size())
+        #print((self.w).size())
 
         gc.collect()
         # print("\t\a[RAME] Starting update weights...")

@@ -34,7 +34,7 @@ def p_h_given_v(self, v):
     - 두번째 (epoch = 1) 부터는 v data가 overload 발생. 에러 내용은 아래와 같음..
         - RuntimeError: shape '[80, 180]' is invalid for input of size 207360000
 
-- Bernoulli-Bernoulli RBM First Train is success.
+- Bernoulli-Bernoulli RBM First Train WAS TERRIBLY FAILED
 
 Apr. 26. 2022 (B. InSung)
 - Tuesday Session Start!
