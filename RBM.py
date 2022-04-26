@@ -8,9 +8,10 @@ Reference from https://github.com/xukai92/pytorch-rbm/blob/ea88786dc8352dae59a4e
 """
 from matplotlib import testing
 import torch.nn.functional as F
+import numpy as np
 import torch.nn as nn
 import torch
-import numpy as np
+import gc
 
 def numel(tensor):
     return torch.numel(tensor)
@@ -134,7 +135,11 @@ class RBMBase:
             self.w_v = ((self.w_v).clone()).unsqueeze(0)
         self.w = ((self.w).clone()).unsqueeze(1)
 
+        gc.collect()
+        print("\t\a[RAME] Starting update weights...")
         self.w = self.w + self.w_v
+        print("\t\a[RAME] Updated weights!")
+
         self.a = self.a + self.a_v
         self.b = self.b + self.b_v
 
