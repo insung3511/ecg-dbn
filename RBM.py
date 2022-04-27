@@ -112,38 +112,22 @@ class RBMBase:
         # Update momentums
         self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
 
-        # print("\t\t\tWould you give some mint chocolate?")
 
         try:
-            # print("\t\tYea, give that shit!")
             testing_tensor = (w_grad.clone() - lam).view(self.vis_num * self.hid_num)
         
         except RuntimeError:
-            # print("\t\tWakk... worst food ever...\a")
             testing_tensor = w_grad.clone() - lam
         
         self.w_v = torch.flatten(self.w_v.clone(), start_dim=0)
-        # print("self.w_v numel and size : \t\t", torch.numel(self.w_v), (self.w_v).size())
-        
-        # print("self.w numel and size : \t\t", torch.numel(self.w), (self.w).size())
-        
 
-        # print("\t[FIRSTT] \"testing_tensor\" Weight - lamba Tensor size : ", testing_tensor.size())
-
-        # ISSUE MAIN PART
         #         scalar |   var x  | scalar
         self.w_v = alpha * self.w_v + eta * testing_tensor
         self.a_v = alpha * self.a_v + eta * a_grad
         self.b_v = alpha * self.b_v + eta * b_grad
 
-        
-        # print(torch.numel(alpha * self.w_v))
-        # print(torch.numel(eta * testing_tensor))
-
-        # Update parameters     
-        
+        # Update parameters            
         try:
-            # print(self.vis_num, " ****** ", self.hid_num)
             self.w_v = ((self.w_v).clone()).view(self.vis_num * self.vis_num * self.hid_num)
 
         except RuntimeError:
@@ -151,17 +135,12 @@ class RBMBase:
             self.w_v = ((self.w_v).clone()).unsqueeze(0)
         self.w = ((self.w).clone()).unsqueeze(1)
 
-        #print((self.w).size())
-
         gc.collect()
-        # print("\t\a[RAME] Starting update weights...")
         self.w = self.w + self.w_v
-        # print("\t\a[RAME] Updated weights!")
 
         self.a = self.a + self.a_v
         self.b = self.b + self.b_v
 
         # Compute reconstruction error
         error = F.mse_loss(v_data, v_prob_neg, size_average=False)
-        # del self.w
         return error

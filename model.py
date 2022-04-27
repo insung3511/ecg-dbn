@@ -56,9 +56,6 @@ for i in range(EPOCH):
     
     del train_temp_data
     print("\t\tReconstruction loss : {:.3f}".format(error.item() * 0.00000001))
-    
-    if error <= 0.0:
-        print("\a\a[ERRR] Loss rapidly down!")
     bbrbm_loss.append(float(format(error.item() * 0.00000001)))
 
 print(bbrbm_loss)

@@ -7,16 +7,8 @@ class RBMBer(RBMBase):
 
     def p_h_given_v(self, v):
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
-
-        # print(self.w.t().size())
-
-        # epoch = 1 -> ISSUE PART
         w_t = (self.w.t().clone()).scatter_(0, index_tensor, (self.w.t().clone())).unsqueeze(1).reshape(self.vis_num, self.hid_num)
 
-        # v = (v.clone()).view(1, self.vis_num)
-        # print("w_t size\t\t: ", w_t.size(), "\tw_t numel\t\t: ", torch.numel(w_t))
-        # print("v size\t\t: ", v.size(), "\tv numel\t\t: ", torch.numel(v))
-        
         '''
         w_t dimension setting up results..
             0 : [1, 80, 180]
