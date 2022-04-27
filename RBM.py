@@ -47,7 +47,7 @@ class RBMBase:
         raise NotImplementedError()
 
     def cd(self, v_data, k, eta, alpha, lam):
-        self.w = nn.Parameter(torch.randn(self.hid_num, self.vis_num) * 0.1)
+        self.w = (torch.randn(self.hid_num, self.vis_num) * 0.1)
         """
         Perform contrastive divergence with k stpes, i.e. CD_k.
 
@@ -62,8 +62,6 @@ class RBMBase:
             error: reconstruction error
         """
 
-        # print("v_data size : ", v_data.size(), "\tv_data numel : ", torch.numel(v_data))
-        
         # Positive phase
         h_pos, h_prob_pos = self.sample_h_given_v(v_data)
 
@@ -88,7 +86,6 @@ class RBMBase:
         )
 
         stats_pos = torch.flatten(stats_pos.clone(), start_dim=FLATTEN_DIM)
-        # print("stats_pos size : ", stats_pos.size(), " \tstats_pos elemetns count : ", torch.numel(stats_pos))
 
         '''     STATS NEGATIVE    '''
 
@@ -103,7 +100,6 @@ class RBMBase:
         )
 
         stats_neg = torch.flatten(stats_neg.clone(), start_dim=FLATTEN_DIM)
-        # print("stats_neg size : ", stats_neg.size(), " \tstats_neg elemetns count : ", torch.numel(stats_neg))
 
         # Compute gradients
         batch_size = v_data.size()[0]
@@ -112,7 +108,6 @@ class RBMBase:
         b_grad = torch.sum(h_prob_pos - h_prob_neg, 0) / batch_size
 
         w_grad = torch.flatten(w_grad.clone(), start_dim=FLATTEN_DIM)
-        # print("w_grad size : ", w_grad.size(), "\tw_grad elemetns count : ", torch.numel(w_grad))
 
         # Update momentums
         self.w = (self.w.clone()).view(self.vis_num * self.hid_num)
@@ -168,5 +163,5 @@ class RBMBase:
 
         # Compute reconstruction error
         error = F.mse_loss(v_data, v_prob_neg, size_average=False)
-        del self.w
+        # del self.w
         return error

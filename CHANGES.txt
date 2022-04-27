@@ -35,6 +35,8 @@ def p_h_given_v(self, v):
         - RuntimeError: shape '[80, 180]' is invalid for input of size 207360000
 
 - Bernoulli-Bernoulli RBM First Train WAS TERRIBLY FAILED
+- 기존 ISSUE (Loss 값이 확 떨어지는 현상) 의 문제를 해결하고자 scikit_learn을 활용함.
+    - scikit learn으로 data split
 
 Apr. 26. 2022 (B. InSung)
 - Tuesday Session Start!

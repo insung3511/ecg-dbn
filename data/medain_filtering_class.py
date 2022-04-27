@@ -46,7 +46,6 @@ def butter_lowpass(cutoff, butter_data, fs=35, order=12):
     butter_list.append(filtfilt(b, a, butter_data))
     return butter_list
 
-
 ########################
 #  Renaming data path  #
 ########################

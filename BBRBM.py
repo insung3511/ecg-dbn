@@ -49,5 +49,5 @@ class RBMBer(RBMBase):
             )   + self.a
         )    
 
-    def cd(self, v_data, k=10, eta=0.2, alpha=0.9, lam=0.0):
+    def cd(self, v_data, k=1, eta=0.2, alpha=0.9, lam=0.0):
         return RBMBase.cd(self, v_data, k, eta, alpha, lam)
