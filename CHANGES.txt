@@ -1,6 +1,8 @@
-DEADLINE!
-## 수요일까지 Train 시키고 Test 돌리기
-    ## 정확도 출력, Train set 모두 학습 후 DB3로 테스트 진행.
+Apr. 28. 2022 (B.InSung)
+- Drunk night session...
+- GBRBM 에서 오류 발생
+    - RuntimeError: The size of tensor a (180) must match the size of tensor b (80) at non-singleton dimension 1
+    - size의 unmatching 귀찮으니 내일의 나를 믿어야지.
 
 Apr. 27. 2022 (B. InSung)
 - Wensday Session Start... but feels like Tuesday...

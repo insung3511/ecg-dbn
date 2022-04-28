@@ -5,6 +5,7 @@ from sklearn import datasets
 from GBRBM import RBMGaussHid
 from BBRBM import RBMBer
 import torch
+import csv
 
 BATCH_SIZE = 10
 EPOCH = 90
@@ -43,6 +44,7 @@ gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 '''     BBRBM      '''
 bbrbm_loss = list()
+gbrbm_loss = list()
 
 batch_cnt = 0
 for i in range(EPOCH):
@@ -52,15 +54,23 @@ for i in range(EPOCH):
 
     batch_cnt += VISIBLE_UNITS
     print("Epoch : {}".format(i + 1))
-    error = bbrbm.cd(train_temp_data)
+    error_bb = bbrbm.cd(train_temp_data)
+    error_gb = gbrbm.cd(train_temp_data)
     
     del train_temp_data
-    print("\t\tReconstruction loss : {:.3f}".format(error.item() * 0.00000001))
-    bbrbm_loss.append(float(format(error.item() * 0.00000001)))
+    print("\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001),
+          "\t\tGaussian Reconstruction loss : {:.3f}\n".format(error_gb.item() * 0.00000001))
+    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
+    gbrbm_loss.append(float(format(error_gb.item() * 0.00000001)))
 
+# error = bbrbm.cd(torch.tensor(X_test))
 print(bbrbm_loss)
-
 plt.plot(bbrbm_loss)
+plt.ylabel('loss')
+plt.show()
+
+print(gbrbm_loss)
+plt.plot(gbrbm_loss)
 plt.ylabel('loss')
 plt.show()
 
@@ -80,8 +90,3 @@ plt.show()
 # #     # print("Reconstruction error: %.3f" % (error.data[0]))
 # #     print("\t\tReconstruction loss : {:.3f}".format(error.item() * 0.00000001))
 # #     gbrbm_loss.append(float(format(error.item() * 0.00000001)))
-
-# # ''' loss to csv '''
-# # with open('model_loss.csv', 'w', newline='') as f:
-# #     write = csv.writer(f)
-# #     write.writerow(bbrbm_loss)

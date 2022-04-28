@@ -6,7 +6,7 @@ class RBMGaussHid(RBMBase):
         RBMBase.__init__(self, vis_num, hid_num)
 
     def p_h_given_v(self, v):
-        return torch.matmul(v, self.w) + self.b
+        return torch.matmul(self.w, v) + self.b
 
     def sample_h_given_v(self, v):
         h_prob = self.p_h_given_v(v)
@@ -18,6 +18,8 @@ class RBMGaussHid(RBMBase):
         return (h_prob + r), h_prob
 
     def p_v_given_h(self, h):
+        h = (h.clone()).resize_(1, self.vis_num)   
+        print("h size : ",h.size(), "\tw.t() size : ", self.w.t().size())
         return torch.sigmoid(torch.matmul(h, self.w.t()) + self.a)
 
     def cd(self, v_data, k=1, eta=0.001, alpha=0.5, lam=0.0002):
