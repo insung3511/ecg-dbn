@@ -76,6 +76,7 @@ class RBMBase:
 
         # Compute statistics
         # Postivie way (Visible to Hidden)
+        print("\t\t\t\tVisible Layer to Hidden Layer Passing")
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
         v_data = v_data.unsqueeze(1)
         h_prob_pos = h_prob_pos.unsqueeze(0)
@@ -90,6 +91,7 @@ class RBMBase:
         '''     STATS NEGATIVE    '''
 
         # Postivie way (Hidden to Visible)
+        print("\t\t\t\tHidden Layer to Visible Layer Passing")
         index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
         v_prob_neg_t = (v_prob_neg.t()).unsqueeze(0)
         h_prob_neg = h_prob_neg.unsqueeze(0)

@@ -8,7 +8,7 @@ import torch
 import csv
 
 BATCH_SIZE = 10
-EPOCH = 90
+EPOCH = 120
 LEARNING_RATE = 0.2
 ANNEALING_RATE = 0.999
 VISIBLE_UNITS = 80    
@@ -43,7 +43,27 @@ bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
 gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 '''     BBRBM      '''
-bbrbm_loss = list()
+# bbrbm_loss = list()
+
+# batch_cnt = 0
+# for i in range(EPOCH):
+#     train_temp_data = torch.FloatTensor(X_train[batch_cnt : batch_cnt + VISIBLE_UNITS])
+#     if len(train_temp_data) != VISIBLE_UNITS:
+#         print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
+
+#     batch_cnt += VISIBLE_UNITS
+#     error_bb = bbrbm.cd(train_temp_data)
+    
+#     del train_temp_data
+#     print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
+#     bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
+
+# print(bbrbm_loss)
+# plt.plot(bbrbm_loss)
+# plt.ylabel('loss')
+# # plt.show()
+
+'''     GBRBM      '''
 gbrbm_loss = list()
 
 batch_cnt = 0
@@ -54,39 +74,13 @@ for i in range(EPOCH):
 
     batch_cnt += VISIBLE_UNITS
     print("Epoch : {}".format(i + 1))
-    error_bb = bbrbm.cd(train_temp_data)
-    error_gb = gbrbm.cd(train_temp_data)
+    error_bb = gbrbm.cd(train_temp_data)
     
     del train_temp_data
-    print("\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001),
-          "\t\tGaussian Reconstruction loss : {:.3f}\n".format(error_gb.item() * 0.00000001))
+    print("\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
     bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
-    gbrbm_loss.append(float(format(error_gb.item() * 0.00000001)))
-
-# error = bbrbm.cd(torch.tensor(X_test))
-print(bbrbm_loss)
-plt.plot(bbrbm_loss)
-plt.ylabel('loss')
-plt.show()
 
 print(gbrbm_loss)
 plt.plot(gbrbm_loss)
 plt.ylabel('loss')
 plt.show()
-
-# '''     GBRBM      '''
-# # gbrbm_loss = list()
-
-# # batch_cnt = 0
-# # for i in range(EPOCH):
-# #     # train_temp_data = torch.ones(VISIBLE_UNITS)
-# #     train_temp_data = torch.FloatTensor(train_data[batch_cnt : batch_cnt + VISIBLE_UNITS])
-    
-# #     batch_cnt += VISIBLE_UNITS
-# #     print("Epoch : {}".format(i + 1))
-# #     error = gbrbm.cd(train_temp_data)
-    
-# #     del train_temp_data
-# #     # print("Reconstruction error: %.3f" % (error.data[0]))
-# #     print("\t\tReconstruction loss : {:.3f}".format(error.item() * 0.00000001))
-# #     gbrbm_loss.append(float(format(error.item() * 0.00000001)))

@@ -6,21 +6,49 @@ class RBMGaussHid(RBMBase):
         RBMBase.__init__(self, vis_num, hid_num)
 
     def p_h_given_v(self, v):
-        return torch.matmul(self.w, v) + self.b
+        w = (torch.flatten(self.w.clone())).view(self.hid_num, self.vis_num)
+
+        if v.dim() != 2:
+            v = v.clone().unsqueeze(1)
+
+        print("----------->", w.dim(), "==============>", v.dim())
+        print("<-----------", w.size(), "<==============", v.size())
+        
+        return torch.matmul(
+            w, v
+        )   + self.b
+        # try:
+        #     print("{:-1^}Successfully worked")
+        #     return torch.matmul(
+        #         w, v
+        #     ) + self.b
+
+        # except RuntimeError:
+        #     print("{:-1^}Successfully FUCKED UP")
+        #     return torch.matmul(
+        #         w, v.view(self.vis_num, self.hid_num)
+        #     ) + self.b
 
     def sample_h_given_v(self, v):
         h_prob = self.p_h_given_v(v)
-
         r = torch.randn(h_prob.size())
-        if self.has_gpu:
-            r = r.cuda(self.gpu_id)
-
+        
         return (h_prob + r), h_prob
 
     def p_v_given_h(self, h):
-        h = (h.clone()).resize_(1, self.vis_num)   
-        print("h size : ",h.size(), "\tw.t() size : ", self.w.t().size())
-        return torch.sigmoid(torch.matmul(h, self.w.t()) + self.a)
+        print(h.size())
+
+        index_tensor = torch.Tensor.long(torch.ones(self.hid_num, 0))
+
+        # ISSUE PART
+        # h = h.clone().scatter_(0, index_tensor, h.clone().detach()).view(self.hid_num, 1)
+
+        return torch.sigmoid(
+            torch.matmul(
+                h.scatter_(0, index_tensor, h.clone()), 
+                torch.reshape(self.w.t(), (self.hid_num, self.vis_num))
+            ) + self.a
+        )
 
     def cd(self, v_data, k=1, eta=0.001, alpha=0.5, lam=0.0002):
         return RBMBase.cd(self, v_data, k, eta, alpha, lam)

@@ -1,4 +1,17 @@
-Apr. 28. 2022 (B.InSung)
+Apr. 29. 2022 (B. InSung)
+- Friday Session Start.
+- GBRBM 에서 BBRBM와 같은 오류가 발생함.
+    - RuntimeError: The size of tensor a (180) must match the size of tensor b (80) at non-singleton dimension 1.
+    - Dimension unmatching 오류 발생.
+    - torch.flatten 을 통해 dimension을 0으로 통합하면 80 * 180 으로 된 텐서는 14400 * 1 텐서로 변형됨.
+      텐서 사이즈가 맞지 않아 오류 발생.
+- p_h_given_v matmul dimension 오류
+    - 현저히 같은 이슈. weight와 visible layer 의 input에서 tensor size가 맞지 않아서 충돌이 발생함.
+    - 180 * 80 mul 180 * 80
+          ^---w        ^---v
+        - ~~너무 깐깐한 놈임...~~
+
+Apr. 28. 2022 (B. InSung)
 - Drunk night session...
 - GBRBM 에서 오류 발생
     - RuntimeError: The size of tensor a (180) must match the size of tensor b (80) at non-singleton dimension 1
