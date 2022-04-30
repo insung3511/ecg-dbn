@@ -2,8 +2,6 @@ from sklearn.model_selection import train_test_split
 import data.medain_filtering_class as mf
 import matplotlib.pyplot as plt
 from sklearn import datasets
-from GBRBM import RBMGaussHid
-from BBRBM import RBMBer
 import torch
 import csv
 
@@ -39,61 +37,3 @@ train_data = torch.FloatTensor(X_train)
 test_data = torch.FloatTensor(X_test)
 
 print("[INFO] Model object added")
-bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
-gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
-
-'''     BBRBM      '''
-bbrbm_loss = list()
-
-batch_cnt = 0
-for i in range(EPOCH):
-    train_temp_data = torch.FloatTensor(X_train[batch_cnt : batch_cnt + VISIBLE_UNITS])
-    if len(train_temp_data) != VISIBLE_UNITS:
-        print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
-
-    batch_cnt += VISIBLE_UNITS
-    error_bb = bbrbm.cd(train_temp_data)
-    
-    del train_temp_data
-    print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
-    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
-
-print(bbrbm_loss)
-plt.plot(bbrbm_loss)
-plt.ylabel('loss')
-
-batch_cnt = 0
-for i in range(EPOCH):
-    train_temp_data = torch.FloatTensor(X_test[batch_cnt : batch_cnt + VISIBLE_UNITS])
-    if len(train_temp_data) != VISIBLE_UNITS:
-        print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
-        break
-
-    batch_cnt += VISIBLE_UNITS
-    error_bb = bbrbm.cd(train_temp_data)
-    
-    del train_temp_data
-    print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
-    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
-
-'''     GBRBM      '''
-gbrbm_loss = list()
-
-batch_cnt = 0
-for i in range(EPOCH):
-    train_temp_data = torch.FloatTensor(X_train[batch_cnt : batch_cnt + VISIBLE_UNITS])
-    if len(train_temp_data) != VISIBLE_UNITS:
-        print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
-
-    batch_cnt += VISIBLE_UNITS
-    print("Epoch : {}".format(i + 1))
-    error_bb = gbrbm.cd(train_temp_data)
-    
-    del train_temp_data
-    print("\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
-    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
-
-print(gbrbm_loss)
-plt.plot(gbrbm_loss)
-plt.ylabel('loss')
-plt.show()
