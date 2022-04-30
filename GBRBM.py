@@ -9,16 +9,15 @@ class RBMGaussHid(RBMBase):
         w = self.w.clone()
         if v.dim() != 2:
             v = v.clone().view(self.vis_num, 1)
+            # w = w.clone().view(1, self.vis_num * self.hid_num)
 
         if list(v.size()) == list(w.size()):
             v = v.clone().view(list(w.size())[1], list(w.size())[0])
 
-        print(v, w)
-
         print("<-----------", w.size(), "<==============", v.size())
         print("----------->", w.dim(), "==============>", v.dim())
         
-        return torch.matmul(
+        return torch.mm(
             w, v
         )   + self.b
         

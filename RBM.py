@@ -78,14 +78,29 @@ class RBMBase:
         # Postivie way (Visible to Hidden)
         print("\t\t\t\tVisible Layer to Hidden Layer Passing")
         index_tensor = torch.Tensor.long(torch.ones(self.vis_num, 0))
+        
+        # v_data = torch.flatten(v_data.unsqueeze(0).scatter_(0, index_tensor, v_data.clone()))
+        # h_prob_pos = torch.flatten(h_prob_pos.clone())
+
+        # v_data = v_data.unsqueeze(1).view(self.vis_num, 1)
+        # h_prob_pos = torch.flatten(h_prob_pos.unsqueeze(0)).view(1, self.hid_num * self.hid_num)
+
         v_data = v_data.unsqueeze(1)
         h_prob_pos = h_prob_pos.unsqueeze(0)
 
+        print("v_data size : ", \
+            v_data.size(),
+            "h_prob_pos : ", h_prob_pos.size())
+
+        # stats_pos = torch.matmul(
+        #     # v_data,         
+        #     v_data.scatter_(0, index_tensor, v_data.clone()),
+        #     h_prob_pos
+        # )
         stats_pos = torch.matmul(
             (v_data).scatter_(0, index_tensor, v_data.clone()), 
             h_prob_pos
         )
-
         stats_pos = torch.flatten(stats_pos.clone(), start_dim=FLATTEN_DIM)
 
         '''     STATS NEGATIVE    '''

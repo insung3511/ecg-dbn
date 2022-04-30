@@ -43,25 +43,38 @@ bbrbm = RBMBer(VISIBLE_UNITS, HIDDEN_UNITS)
 gbrbm = RBMGaussHid(VISIBLE_UNITS, HIDDEN_UNITS)
 
 '''     BBRBM      '''
-# bbrbm_loss = list()
+bbrbm_loss = list()
 
-# batch_cnt = 0
-# for i in range(EPOCH):
-#     train_temp_data = torch.FloatTensor(X_train[batch_cnt : batch_cnt + VISIBLE_UNITS])
-#     if len(train_temp_data) != VISIBLE_UNITS:
-#         print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
+batch_cnt = 0
+for i in range(EPOCH):
+    train_temp_data = torch.FloatTensor(X_train[batch_cnt : batch_cnt + VISIBLE_UNITS])
+    if len(train_temp_data) != VISIBLE_UNITS:
+        print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
 
-#     batch_cnt += VISIBLE_UNITS
-#     error_bb = bbrbm.cd(train_temp_data)
+    batch_cnt += VISIBLE_UNITS
+    error_bb = bbrbm.cd(train_temp_data)
     
-#     del train_temp_data
-#     print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
-#     bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
+    del train_temp_data
+    print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
+    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
 
-# print(bbrbm_loss)
-# plt.plot(bbrbm_loss)
-# plt.ylabel('loss')
-# # plt.show()
+print(bbrbm_loss)
+plt.plot(bbrbm_loss)
+plt.ylabel('loss')
+
+batch_cnt = 0
+for i in range(EPOCH):
+    train_temp_data = torch.FloatTensor(X_test[batch_cnt : batch_cnt + VISIBLE_UNITS])
+    if len(train_temp_data) != VISIBLE_UNITS:
+        print("\t\t[ISUE] train_temp_data size : ", len(train_temp_data))
+        break
+
+    batch_cnt += VISIBLE_UNITS
+    error_bb = bbrbm.cd(train_temp_data)
+    
+    del train_temp_data
+    print("Epoch : {}".format(i + 1) + "\t\tBernouli Reconstruction loss : {:.3f}\n".format(error_bb.item() * 0.00000001))
+    bbrbm_loss.append(float(format(error_bb.item() * 0.00000001)))
 
 '''     GBRBM      '''
 gbrbm_loss = list()
