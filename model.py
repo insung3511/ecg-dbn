@@ -1,9 +1,14 @@
 from sklearn.model_selection import train_test_split
 import data.medain_filtering_class as mf
-import matplotlib.pyplot as plt
-from sklearn import datasets
+from torch.utils.data import DataLoader
+# import matplotlib.pyplot as plt
+# from sklearn import datasets
+from torch.autograd import Variable
+import torch.optim as optim
+from RBM import RBM
+import numpy as np
 import torch
-import csv
+
 
 BATCH_SIZE = 10
 EPOCH = 120
@@ -11,6 +16,7 @@ LEARNING_RATE = 0.2
 ANNEALING_RATE = 0.999
 VISIBLE_UNITS = 80    
 HIDDEN_UNITS = 180
+K_FOLD = 1
 
 print("[MODL] Model main code is starting....")
 
@@ -28,6 +34,14 @@ X_train, X_test, y_train, y_test = train_test_split(
     shuffle=True
 )
 
+train_dataloader = DataLoader(X_train + y_train,
+                              batch_size=BATCH_SIZE,
+                              shuffle=True)
+
+test_dataloader = DataLoader(X_test + y_test,
+                             batch_size=BATCH_SIZE,
+                             shuffle=True)
+
 print("X_train length : ", len(X_train))
 print("X_test  length : ", len(X_test))
 print("y_train length : ", len(y_train))
@@ -37,3 +51,26 @@ train_data = torch.FloatTensor(X_train)
 test_data = torch.FloatTensor(X_test)
 
 print("[INFO] Model object added")
+
+rbm = RBM(n_vis=VISIBLE_UNITS, n_hid=HIDDEN_UNITS, k=K_FOLD)
+train_op = optim.SGD(rbm.parameters(), 0.1)
+
+for epoch in range(EPOCH):
+    loss_ = []
+    for _, (data) in enumerate(train_dataloader):
+        data = Variable(data.view(-1, BATCH_SIZE))
+        print((data))
+
+        sample_data = data.bernoulli()
+
+        v, v1 = rbm(sample_data)
+        
+        loss = rbm.free_energy(v) - rbm.free_energy(v1)
+        loss_.append(loss.data)
+        
+        train_op.zero_grad()
+        loss.backward()
+        train_op.step()
+
+    print("Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+

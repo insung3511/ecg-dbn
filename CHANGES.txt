@@ -1,6 +1,7 @@
 Apr. 30. 2022 (B. InSung)
 - Saturday Session Start!
-- 그냥 멘탈 나감. 왜 되던 것도 이제 또 안되는건데 ...
+- 아예 새롭게 RBM 모델을 세움. 
+    - 어차피 BBRBM (RBM) -> GBRBM 으로 제작하면 되니 BBRBM이 성공하면 확률분포만 Gaussian으로 바꾸면 된다 라는게 나의 생각.
 
 Apr. 29. 2022 (B. InSung)
 - Friday Session Start.
