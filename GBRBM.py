@@ -13,6 +13,8 @@ class RBMGaussHid(RBMBase):
         if list(v.size()) == list(w.size()):
             v = v.clone().view(list(w.size())[1], list(w.size())[0])
 
+        print(v, w)
+
         print("<-----------", w.size(), "<==============", v.size())
         print("----------->", w.dim(), "==============>", v.dim())
         
