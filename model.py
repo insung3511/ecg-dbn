@@ -52,16 +52,17 @@ test_data = torch.FloatTensor(X_test)
 
 print("[INFO] Model object added")
 
-rbm = RBM(n_vis=VISIBLE_UNITS, n_hid=HIDDEN_UNITS, k=K_FOLD)
+rbm = RBM(n_vis=VISIBLE_UNITS, n_hid=HIDDEN_UNITS, k=K_FOLD, batch=BATCH_SIZE)
 train_op = optim.SGD(rbm.parameters(), 0.1)
 
 for epoch in range(EPOCH):
     loss_ = []
     for _, (data) in enumerate(train_dataloader):
-        data = Variable(data.view(-1, BATCH_SIZE))
-        print((data))
+        data = Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1))
+        print("OG Data Size : ", data.size(), "OG Data : ", data)
 
-        sample_data = data.bernoulli()
+        sample_data = torch.bernoulli(data)
+        print("SP Data Size : ", sample_data.size(), "SP Data : ", sample_data)
 
         v, v1 = rbm(sample_data)
         

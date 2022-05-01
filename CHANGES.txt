@@ -1,3 +1,8 @@
+May. 1. 2022 (B. InSung)
+- Sunday and May is start!
+- Visible Layer에서 Hidden Layer로 이동하는 도중에 오류발생
+    - RuntimeError: The expanded size of the tensor (1) must match the existing size (10) at non-singleton dimension 1.  Target sizes: [1, 1].  Tensor sizes: [10]
+
 Apr. 30. 2022 (B. InSung)
 - Saturday Session Start!
 - 아예 새롭게 RBM 모델을 세움. 
