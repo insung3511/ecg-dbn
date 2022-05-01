@@ -1,8 +1,7 @@
+from random import sample
 from sklearn.model_selection import train_test_split
 import data.medain_filtering_class as mf
 from torch.utils.data import DataLoader
-# import matplotlib.pyplot as plt
-# from sklearn import datasets
 from torch.autograd import Variable
 import torch.optim as optim
 from RBM import RBM
@@ -59,6 +58,7 @@ for epoch in range(EPOCH):
     loss_ = []
     for _, (data) in enumerate(train_dataloader):
         data = Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1))
+        data = torch.tensor(torch.flatten(data.clone()), dtype=torch.float32)
         print("OG Data Size : ", data.size(), "OG Data : ", data)
 
         sample_data = torch.bernoulli(data)

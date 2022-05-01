@@ -11,6 +11,7 @@ class RBM(nn.Module):
         self.v_bias = nn.Parameter(torch.zeros(batch))
         self.h_bias = nn.Parameter(torch.zeros(batch))
         self.k      = k
+        self.batch  = batch
     
     #                       p is probability of model
     def sample_from_p(self, p):
@@ -22,7 +23,7 @@ class RBM(nn.Module):
 
     #                v is input data from visible layer
     def v_to_h(self, v):
-        print(self.W.size())
+        print(self.W.dim(), "\t", v.dim())
         p_h = F.sigmoid(
             F.linear(v, self.W, self.h_bias)
         )
