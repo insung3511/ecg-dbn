@@ -1,4 +1,3 @@
-from sklearn.linear_model import LinearRegression
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.utils.data
@@ -25,31 +24,20 @@ class RBM(nn.Module):
 
     #                v is input data from visible layer
     def v_to_h(self, v):
-        print("= " * 10, "\aVISIBLE TO HIDDEN")
         h_bias = (self.h_bias.clone()).expand(10)
         v = v.clone().expand(10)
-
-        # convert 1D tensor to 2D tensor
         w = self.W.clone().repeat(10, 1)
-
-        print(h_bias.size(), v.size(), w.size())
-        print(h_bias.dim(), v.dim(), w.dim())
 
         p_h = F.sigmoid(
             F.linear(v, w, bias=h_bias)
         )
 
         sample_h = self.sample_from_p(p_h)
-        
         return p_h, sample_h
 
     def h_to_v(self, h):
-        print("= " * 10, "\aHIDDEN TO VISIBLE")
-        
         v_bias = (self.v_bias.clone())
-        # w = self.W.t().clone().repeat(10, 1)
         w = self.W.t().clone().repeat(1, 10)
-        print(v_bias.size())
 
         p_v = F.sigmoid(
             F.linear(h, w, bias=v_bias)
@@ -61,27 +49,20 @@ class RBM(nn.Module):
     def forward(self, v):
         pre_h1, h1 = self.v_to_h(v)
         h_ = h1
+
         for _ in range(self.k):
             pre_v_, v_ = self.h_to_v(h_)
             pre_h_, h_ = self.v_to_h(v_)
         return v, v_
 
-    def free_energy(self, v):
-        print("= " * 10, "FREE ENERGY")
-        
+    def free_energy(self, v):        
         v = v.clone().unsqueeze(1).repeat(1, 10)
         v_bias = self.v_bias.clone()
-        # v_bias = self.v_bias.clone().unsqueeze(1).repeat(1, 10)
-
-        print("V DATA : \t\t{}\t{}".format(v.size(), v.dim()))
-        print("BIAS DATA : \t\t{}\t{}".format(v_bias.size(), v_bias.dim()))
-
-        # v_bias_term = v.mv(self.v_bias)
         v_bias_term = torch.mv(v, v_bias)
 
         h_bias = self.h_bias.clone()
-        w = self.W.clone()
-        ''' ISSUE PART '''
+        w = self.W.clone().repeat(10, 1)
+        
         wx_b = F.linear(v, w, h_bias)
         hidden_term = wx_b.exp().add(1).log().sum(1)
         

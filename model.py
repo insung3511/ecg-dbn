@@ -57,12 +57,13 @@ train_op = optim.SGD(rbm.parameters(), 0.1)
 for epoch in range(EPOCH):
     loss_ = []
     for _, (data) in enumerate(train_dataloader):
-        data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-        print("OG Data Size : ", data.size(), "OG Data : ", data)
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
 
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
-        print("SP Data Size : ", sample_data.size(), "SP Data : ", sample_data)
 
         v, v1 = rbm(sample_data)
         
