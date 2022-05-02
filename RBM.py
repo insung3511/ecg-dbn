@@ -25,6 +25,7 @@ class RBM(nn.Module):
 
     #                v is input data from visible layer
     def v_to_h(self, v):
+        print("= " * 10, "\aVISIBLE TO HIDDEN")
         h_bias = (self.h_bias.clone()).expand(10)
         v = v.clone().expand(10)
 
@@ -39,20 +40,23 @@ class RBM(nn.Module):
         )
 
         sample_h = self.sample_from_p(p_h)
+        
         return p_h, sample_h
 
-    ''' ISSUE PART '''
     def h_to_v(self, h):
-        # v_bias = (self.v_bias.clone()).repeat(1, 10)
+        print("= " * 10, "\aHIDDEN TO VISIBLE")
+        
         v_bias = (self.v_bias.clone())
+        # w = self.W.t().clone().repeat(10, 1)
+        w = self.W.t().clone().repeat(1, 10)
         print(v_bias.size())
 
         p_v = F.sigmoid(
-            F.linear(h, self.W.t(), bias=v_bias)
+            F.linear(h, w, bias=v_bias)
         )
 
         sample_v = self.sample_from_p(p_v)
-        return sample_v
+        return p_v, sample_v
     
     def forward(self, v):
         pre_h1, h1 = self.v_to_h(v)
@@ -63,8 +67,22 @@ class RBM(nn.Module):
         return v, v_
 
     def free_energy(self, v):
-        v_bias_term = v.mv(self.v_bias)
-        wx_b = F.linear(v, self.W, self.h_bias)
+        print("= " * 10, "FREE ENERGY")
+        
+        v = v.clone().unsqueeze(1).repeat(1, 10)
+        v_bias = self.v_bias.clone()
+        # v_bias = self.v_bias.clone().unsqueeze(1).repeat(1, 10)
+
+        print("V DATA : \t\t{}\t{}".format(v.size(), v.dim()))
+        print("BIAS DATA : \t\t{}\t{}".format(v_bias.size(), v_bias.dim()))
+
+        # v_bias_term = v.mv(self.v_bias)
+        v_bias_term = torch.mv(v, v_bias)
+
+        h_bias = self.h_bias.clone()
+        w = self.W.clone()
+        ''' ISSUE PART '''
+        wx_b = F.linear(v, w, h_bias)
         hidden_term = wx_b.exp().add(1).log().sum(1)
         
         return (-(hidden_term) - v_bias_term).mean()
