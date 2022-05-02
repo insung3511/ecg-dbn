@@ -27,16 +27,14 @@ class RBM(nn.Module):
     ''' ISSUE PART '''
     def v_to_h(self, v):
         h_bias = (self.h_bias.clone()).expand(10)
-        v = v.clone().expand(10)        
-        
-        # h_bias = (self.h_bias.clone())
-        # v = v.clone()
+        v = v.clone().expand(10)
+        w = self.W.clone().squeeze()
 
-        print(h_bias.size(), v.size(), self.W.size())
-        print(h_bias.dim(), v.dim(), self.W.dim())
+        print(h_bias.size(), v.size(), w.size())
+        print(h_bias.dim(), v.dim(), w.dim())
 
         p_h = F.sigmoid(
-            F.linear(v, self.W, bias=h_bias)
+            F.linear(v, w, bias=h_bias)
         )
 
         sample_h = self.sample_from_p(p_h)
@@ -50,6 +48,7 @@ class RBM(nn.Module):
         p_v = F.sigmoid(
             F.linear(h, self.W.t(), bias=v_bias)
         )
+
         sample_v = self.sample_from_p(p_v)
         return sample_v
     

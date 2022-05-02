@@ -58,7 +58,6 @@ for epoch in range(EPOCH):
     loss_ = []
     for _, (data) in enumerate(train_dataloader):
         data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-        # data = torch.tensor(torch.flatten(data.clone()), dtype=torch.float32)
         print("OG Data Size : ", data.size(), "OG Data : ", data)
 
         sample_data = torch.bernoulli(data)
