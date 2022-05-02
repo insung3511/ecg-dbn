@@ -24,11 +24,12 @@ class RBM(nn.Module):
         )
 
     #                v is input data from visible layer
-    ''' ISSUE PART '''
     def v_to_h(self, v):
         h_bias = (self.h_bias.clone()).expand(10)
         v = v.clone().expand(10)
-        w = self.W.clone().squeeze()
+
+        # convert 1D tensor to 2D tensor
+        w = self.W.clone().repeat(10, 1)
 
         print(h_bias.size(), v.size(), w.size())
         print(h_bias.dim(), v.dim(), w.dim())
@@ -40,9 +41,10 @@ class RBM(nn.Module):
         sample_h = self.sample_from_p(p_h)
         return p_h, sample_h
 
+    ''' ISSUE PART '''
     def h_to_v(self, h):
         # v_bias = (self.v_bias.clone()).repeat(1, 10)
-        v_bias = (self.v_bias.clone()).size(dim=1)
+        v_bias = (self.v_bias.clone())
         print(v_bias.size())
 
         p_v = F.sigmoid(

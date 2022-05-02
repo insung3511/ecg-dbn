@@ -6,6 +6,9 @@ May. 2. 2022. (B. InSung)
 - StackOverflow를 통해 얻은 지식... https://stackoverflow.com/questions/72081872/runtimeerror-output-with-shape-1-doesnt-match-the-broadcast-shape-10/
     - Mandias 의 말에 따르면 F.linear() 에 들어가 있는 Parameters 중에 self.W (이.하. w) 의 크기가 [1, 10] 으로 되어 있기 때문에 Input 1을 넣어 Output 10을 요구하는 것이라고 한다. 
     Mandias는 이를 해결하기 위해서 self.W.squeeze를 말했다만, 이는 나의 코드에서도 동일한 오류가 발생한다. 분명 모든 사이즈와 차원이 1차원이라면... 오류가 날 이유가 없다...
+    
+- 만일 Input이 1이고 Ouput이 10이여서 문제라면 10, 10 으로 변경하면...?
+    - 성공적으로 코드는 돌아감. 다른 오류가 생김. 역시나 이게 바로 인공지능인가 싶다. 허ㅏ어하ㅓ아ㅣ허민어히ㅏㅓ;ㅓㅇㅎ어ㅓㅏㅇ하ㅓㅏ
 
 May. 1. 2022 (B. InSung)
 - Sunday and May is start!
