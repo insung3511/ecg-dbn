@@ -26,8 +26,12 @@ class RBM(nn.Module):
     #                v is input data from visible layer
     ''' ISSUE PART '''
     def v_to_h(self, v):
-        h_bias = (self.h_bias.clone()).expand(1, 10)
-        v = v.clone().expand(1, 10)
+        h_bias = (self.h_bias.clone()).expand(10)
+        v = v.clone().expand(10)        
+        
+        # h_bias = (self.h_bias.clone())
+        # v = v.clone()
+
         print(h_bias.size(), v.size(), self.W.size())
         print(h_bias.dim(), v.dim(), self.W.dim())
 

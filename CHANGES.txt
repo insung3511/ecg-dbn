@@ -1,10 +1,18 @@
+May. 2. 2022. (B. InSung)
+- Monday Session Start!
+- Torch tensor size error. Target Size가 [1, 1] 이면 Tensor Size가 [1, 10] 으로 맞지가 않음.
+    - Tensor size를 1, 1로는 줄일수가 없음. Input 이미 입력된 사이즈가 정해져 있기 때문에 따로 변경이 어려움. 그렇기에 이를 변형을 하던가 하나씩 넣어야하는데...
+    문제는 그렇게 하면 선형 연산이 되질 않음. 사이즈 변형을 함부로 할 수 없는 상태. 3차원으로 가도 Size가 맞지를 않음.
+
 May. 1. 2022 (B. InSung)
 - Sunday and May is start!
 - Tensor dimension 및 여러문제를 맞춰주니 다른 문제가 발생함.
     - Sample_data 와 weight의 크기가 10, 1로 달라 선형 연산이 안됨. 이에 대한 해결책은 모색중이나 대부분 MNIST에서 오류가 발생
         - MNIST에서 이미지 데이터를 갖고올때 3차원이 아닌 4차원으로 변형이 되어버림. 즉, 그로 인해 잘못된 데이터를 갖고 옮.
 - README 수정. RBM.py 변경 사항을 수정함.
-
+- h_to_v 또차원.. 오류 발생
+    - Non-singleton dimension 1 오류 발생. 서로 맞지 않은 사이즈의 오류 
+    - RuntimeError: The expanded size of the tensor (1) must match the existing size (10) at non-singleton dimension 1.  Target sizes: [1, 1].  Tensor sizes: [1, 10]
 
 Apr. 30. 2022 (B. InSung)
 - Saturday Session Start!
