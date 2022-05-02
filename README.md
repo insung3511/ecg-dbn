@@ -16,8 +16,8 @@ ecg-csv repo에 있는 코드를 활용한 것으로 ECG Database 들을 활용�
 ## ./model.py
 파일명에서 추측할 수 있듯이 이는 모델코드이다. 모델 설게를 위해서 쓰이는 코드로 train, test에 활용될 예정이다. 현재는 아직 개발중
 
-## ./RBM.py ./BBRBM.py ./GBRBM.py
-RBM을 구성하기 위한 코드로 RBM을 기반으로 하기에 RBM.py가 RBM 레이어를 만들고 이를 객체로 갖고와 BBRBM에서는 Bernouil 확률 분포로 연산, GBRBM에서는 Gaussian 확률 분포로 연산을 한다. 해당 코드는 <a href="https://github.com/xukai92/pytorch-rbm/blob/ea88786dc8352dae59a4e306ad8fe4d274e13c14/rbm.py">여기에서</a> 갖고 왔으며 개발자가 명시한 라이센스 표준 정책에 따르고 있다.
+## ./RBM.py
+이전에는 RBM, GBRBM, BBRBM 을 나누어서 활용했으나 지금은 RBM 모델을 하나 만들고 Bernoulli 확률 분포로 넘겨주어 BBRBM 연산을 할려고 한다. Gaussian 확률 분포로 넘겨주면 GBRBM 으로 연산이 되기에 RBM하나로 왔다갔다 할 예정이다.
 
 # Status
 현재 모든 진행 상황은 CHANGES.txt에 기록을 하고 있으며 기록 후 변경 내용이 있을때마다 커밋을 하고 있다. 그렇기에 과거 지워진 내용이나 달라진 내용을 확인하고 싶다면 commit history를 보면 알 수 있다. 

@@ -1,8 +1,10 @@
+from sklearn.linear_model import LinearRegression
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.utils.data
 import torch.nn as nn
 import torch
+import numpy as np
 
 class RBM(nn.Module):
     def __init__(self, n_vis, n_hid, k, batch):
@@ -22,17 +24,27 @@ class RBM(nn.Module):
         )
 
     #                v is input data from visible layer
+    ''' ISSUE PART '''
     def v_to_h(self, v):
-        print(self.W.dim(), "\t", v.dim())
+        h_bias = (self.h_bias.clone()).expand(1, 10)
+        v = v.clone().expand(1, 10)
+        print(h_bias.size(), v.size(), self.W.size())
+        print(h_bias.dim(), v.dim(), self.W.dim())
+
         p_h = F.sigmoid(
-            F.linear(v, self.W, self.h_bias)
+            F.linear(v, self.W, bias=h_bias)
         )
+
         sample_h = self.sample_from_p(p_h)
         return p_h, sample_h
 
     def h_to_v(self, h):
+        # v_bias = (self.v_bias.clone()).repeat(1, 10)
+        v_bias = (self.v_bias.clone()).size(dim=1)
+        print(v_bias.size())
+
         p_v = F.sigmoid(
-            F.linear(h, self.W.t(), self.v_bias)
+            F.linear(h, self.W.t(), bias=v_bias)
         )
         sample_v = self.sample_from_p(p_v)
         return sample_v

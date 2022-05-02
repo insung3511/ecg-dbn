@@ -3,6 +3,8 @@ May. 1. 2022 (B. InSung)
 - Tensor dimension 및 여러문제를 맞춰주니 다른 문제가 발생함.
     - Sample_data 와 weight의 크기가 10, 1로 달라 선형 연산이 안됨. 이에 대한 해결책은 모색중이나 대부분 MNIST에서 오류가 발생
         - MNIST에서 이미지 데이터를 갖고올때 3차원이 아닌 4차원으로 변형이 되어버림. 즉, 그로 인해 잘못된 데이터를 갖고 옮.
+- README 수정. RBM.py 변경 사항을 수정함.
+
 
 Apr. 30. 2022 (B. InSung)
 - Saturday Session Start!
