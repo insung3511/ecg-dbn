@@ -73,6 +73,26 @@ for epoch in range(EPOCH):
         train_op.zero_grad()
         loss.backward()
         train_op.step()
+    
+for epoch in range(EPOCH):
+    loss_ = []
+    for _, (data) in enumerate(test_dataloader):
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
 
+        sample_data = torch.bernoulli(data)
+        sample_data = torch.flatten(sample_data.clone())
+
+        v, v1 = rbm(sample_data)
+        
+        loss = rbm.free_energy(v) - rbm.free_energy(v1)
+        loss_.append(loss.data)
+        
+        train_op.zero_grad()
+        loss.backward()
+        train_op.step()
+            
     print("Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
 
