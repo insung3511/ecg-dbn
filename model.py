@@ -66,12 +66,13 @@ first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
 second_train_op = optim.SGD(rbm_first.parameters(), 0.1)
 third_train_op = optim.SGD(rbm_first.parameters(), 0.1)
 
-loss_ = []
 output_from_first = list()
 output_from_second = list()
+output_from_third = list()
 
+loss_ = []
 for epoch in range(EPOCH):
-    '''Secnd bbrbm'''
+    '''First bbrbm'''
     for _, (data) in enumerate(train_dataloader):
         try:
             # tnesor float
@@ -108,7 +109,7 @@ for epoch in range(EPOCH):
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
 
-        vog_second, v2 = rbm_first(sample_data)
+        vog_second, v2 = rbm_second(sample_data)
         
         loss_second = rbm_second.free_energy(vog_second) - rbm_second.free_energy(v2)
         loss_.append(loss_second.data)
@@ -120,169 +121,55 @@ for epoch in range(EPOCH):
     output_from_second.append(v2.tolist())
     print(v2)
     print("2ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+
+output_from_second = torch.tensor(output_from_second)
+for epoch in range(EPOCH):
+    '''Third bbrbm'''
+    for _, (data) in enumerate(output_from_second):
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
+
+        sample_data = torch.bernoulli(data)
+        sample_data = torch.flatten(sample_data.clone())
+
+        vog_third, v3 = rbm_third(sample_data)
+        
+        loss_third = rbm_third.free_energy(vog_third) - rbm_third.free_energy(v3)
+        loss_.append(loss_third.data)
+        
+        third_train_op.zero_grad()
+        loss_third.backward()
+        third_train_op.step()
+
+    output_from_third.append(v3.tolist())
+    print(v3)
+    print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
     
-    # '''Third bbrbm'''
-    # for _, (data) in enumerate(train_dataloader):
-    #     try:
-    #         data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-    #     except RuntimeError:
-    #         continue
+print("BBRBM is done.")
+print("GBRBM is start")
 
-    #     sample_data = torch.bernoulli(data)
-    #     sample_data = torch.flatten(sample_data.clone())
+for epoch in range(EPOCH):
+    '''First gbrbm'''
+    for _, (data) in enumerate(output_from_second):
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
 
-    #     v, v1 = rbm_third(sample_data)
+        sample_data = torch.bernoulli(data)
+        sample_data = torch.flatten(sample_data.clone())
+
+        vog_third, v3 = rbm_third(sample_data)
         
-    #     loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-    #     loss_.append(loss.data + 10)
+        loss_third = rbm_third.free_energy(vog_third) - rbm_third.free_energy(v3)
+        loss_.append(loss_third.data)
         
-    #     second_train_op.zero_grad()
-    #     loss.backward()
-    #     second_train_op.step()
+        third_train_op.zero_grad()
+        loss_third.backward()
+        third_train_op.step()
 
-    # '''                                                                 Mark point'''
-    # print("1ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
-# '''2TH BB-rbm_first'''
-
-# train_dataloader = DataLoader(loss_,
-#                               batch_size=BATCH_SIZE,
-#                               shuffle=True)
-# for epoch in range(HIDDEN_UNITS[1]):
-#     for _, (data) in enumerate(loss_):
-#         try:
-#             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-#         except RuntimeError:
-#             continue
-
-#         sample_data = torch.bernoulli(data)
-#         sample_data = torch.flatten(sample_data.clone())
-
-#         v, v1 = rbm_first(sample_data)
-        
-#         loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-#         loss_.append(loss.data + 10)
-        
-#         train_op.zero_grad()
-#         loss.backward()
-#         train_op.step()
-
-#     '''                                                                 Mark point'''
-#     print("2ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
-# '''3TH BB-rbm_first'''
-
-# train_dataloader = DataLoader(loss_,
-#                               batch_size=BATCH_SIZE,
-#                               shuffle=True)
-
-# for epoch in range(HIDDEN_UNITS[2]):
-#     for _, (data) in enumerate(loss_):
-#         try:
-#             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-#         except RuntimeError:
-#             continue
-
-#         sample_data = torch.bernoulli(data)
-#         sample_data = torch.flatten(sample_data.clone())
-
-#         v, v1 = rbm_first(sample_data)
-        
-#         loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-#         loss_.append(loss.data + 10)
-        
-#         train_op.zero_grad()
-#         loss.backward()
-#         train_op.step()
-
-#     '''                                                                 Mark point'''
-#     print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
-# show_adn_save(v.data)
-
-# plt.plot(loss_)
-# plt.show()
-
-
-
-''' GBrbm_first START '''
-# '''1TH GB-rbm_first'''
-# for epoch in range(HIDDEN_UNITS[0]):
-#     for _, (data) in enumerate(test_dataloader):
-#         try:
-#             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-#         except RuntimeError:
-#             continue
-
-#         # sample_data = torch.bernoulli(data)
-#         sample_data = (D.Normal(D.Categorical(data)))
-#         sample_data = torch.flatten(sample_data.clone())
-
-#         v, v1 = rbm_first(sample_data)
-        
-#         loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-#         loss_.append(loss.data + 100)
-        
-#         train_op.zero_grad()
-#         loss.backward()
-#         train_op.step()
-
-#     '''                                                                 Mark point'''
-#     print("1ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
-# '''2TH GB-rbm_first'''
-
-# train_dataloader = DataLoader(loss_,
-#                               batch_size=BATCH_SIZE,
-#                               shuffle=True)
-# for epoch in range(HIDDEN_UNITS[1]):
-#     for _, (data) in enumerate(loss_):
-#         try:
-#             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-#         except RuntimeError:
-#             continue
-
-#         sample_data = torch.bernoulli(data)
-#         sample_data = torch.flatten(sample_data.clone())
-
-#         v, v1 = rbm_first(sample_data)
-        
-#         loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-#         loss_.append(loss.data + 100)
-        
-#         train_op.zero_grad()
-#         loss.backward()
-#         train_op.step()
-
-#     '''                                                                 Mark point'''
-#     print("2ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
-# '''3TH GB-rbm_first'''
-
-# train_dataloader = DataLoader(loss_,
-#                               batch_size=BATCH_SIZE,
-#                               shuffle=True)
-# loss_ = []
-# for epoch in range(HIDDEN_UNITS[2]):
-#     loss_ = []
-#     for _, (data) in enumerate(loss_):
-#         try:
-#             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-#         except RuntimeError:
-#             continue
-
-#         sample_data = torch.bernoulli(data)
-#         sample_data = torch.flatten(sample_data.clone())
-
-#         v, v1 = rbm_first(sample_data)
-        
-#         loss = rbm_first.free_energy(v) - rbm_first.free_energy(v1)
-#         loss_.append(loss.data + 100)
-        
-#         train_op.zero_grad()
-#         loss.backward()
-#         train_op.step()
-
-#     '''                                                                 Mark point'''
-#     print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
-
+    output_from_third.append(v3.tolist())
+    print(v3)
+    print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
