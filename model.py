@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 from RBM import RBM
 import numpy as np
-import random
+import datetime
 import torch
 
+print(datetime.datetime.now(), "model.py code start")
 
 BATCH_SIZE = 10
 EPOCH = 100
@@ -63,8 +64,12 @@ rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=
 rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
 
 first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
-second_train_op = optim.SGD(rbm_first.parameters(), 0.1)
-third_train_op = optim.SGD(rbm_first.parameters(), 0.1)
+second_train_op = optim.SGD(rbm_second.parameters(), 0.1)
+third_train_op = optim.SGD(rbm_third.parameters(), 0.1)
+
+gb_first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
+gb_second_train_op = optim.SGD(rbm_second.parameters(), 0.1)
+gb_third_train_op = optim.SGD(rbm_third.parameters(), 0.1)
 
 output_from_first = list()
 output_from_second = list()
@@ -150,26 +155,95 @@ for epoch in range(EPOCH):
 print("BBRBM is done.")
 print("GBRBM is start")
 
+output_from_first = list()
+output_from_second = list()
+output_from_third = torch.tensor(output_from_third)
+
+rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
+rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
+rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
+
+# print(output_from_third.size(), output_from_third.dim(), "\n", output_from_third)
+gaussian_std = torch.arange(1, 0, -0.1)
+
 for epoch in range(EPOCH):
     '''First gbrbm'''
+    for _, (data) in enumerate(output_from_third):
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
+        
+        # CHANGED to GAUSSIAN
+        sample_data = torch.normal(mean=data, std=gaussian_std)
+        sample_data = torch.flatten(sample_data.clone())
+        print(sample_data)
+
+        gb_vog_first, gb_v1 = rbm_first(sample_data)
+        
+        gb_loss_first = rbm_first.free_energy(gb_vog_first) - rbm_first.free_energy(gb_v1)
+        loss_.append(gb_loss_first.data)
+        
+        gb_first_train_op.zero_grad()
+        gb_loss_first.backward()
+        gb_first_train_op.step()
+
+    output_from_first.append(gb_v1.tolist())
+    print(gb_v1)
+    print("1ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+
+output_from_first = torch.tensor(output_from_first)
+for epoch in range(EPOCH):
+    '''Second gbrbm'''
+    for _, (data) in enumerate(output_from_first):
+        try:
+            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+        except RuntimeError:
+            continue
+        
+        # CHANGED to GAUSSIAN
+        sample_data = torch.normal(mean=data, std=gaussian_std)
+        sample_data = torch.flatten(sample_data.clone())
+        print(sample_data)
+
+        gb_vog_second, gb_v2 = rbm_second(sample_data)
+        
+        gb_loss_second = rbm_second.free_energy(gb_vog_second) - rbm_second.free_energy(gb_v2)
+        loss_.append(gb_loss_second.data)
+        
+        gb_second_train_op.zero_grad()
+        gb_loss_second.backward()
+        gb_second_train_op.step()
+
+    output_from_second.append(gb_v2.tolist())
+    print(gb_v2)
+    print("2ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+
+output_from_second = torch.tensor(output_from_second)
+for epoch in range(EPOCH):
+    '''Third gbrbm'''
     for _, (data) in enumerate(output_from_second):
         try:
             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
         except RuntimeError:
             continue
-
-        sample_data = torch.bernoulli(data)
+        
+        # CHANGED to GAUSSIAN
+        sample_data = torch.normal(mean=data, std=gaussian_std)
         sample_data = torch.flatten(sample_data.clone())
+        print(sample_data)
 
-        vog_third, v3 = rbm_third(sample_data)
+        gb_vog_third, gb_v3 = rbm_third(sample_data)
         
-        loss_third = rbm_third.free_energy(vog_third) - rbm_third.free_energy(v3)
-        loss_.append(loss_third.data)
+        gb_loss_third = rbm_third.free_energy(gb_vog_third) - rbm_second.free_energy(gb_v3)
+        loss_.append(gb_loss_third.data)
         
-        third_train_op.zero_grad()
-        loss_third.backward()
-        third_train_op.step()
+        gb_third_train_op.zero_grad()
+        gb_loss_third.backward()
+        gb_third_train_op.step()
 
-    output_from_third.append(v3.tolist())
-    print(v3)
-    print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    output_from_second.append(gb_v3.tolist())
+    print(gb_v3)
+    print("3ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+
+
