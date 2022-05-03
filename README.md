@@ -14,7 +14,8 @@ ecg-csv repo에 있는 코드를 활용한 것으로 ECG Database 들을 활용�
 지정된 dataset을 pre-processing을 거쳐 신호처리를 하는 코드이다. record_all 디렉토리에 record database가 모두 있으며 앞서 말한 record_converter 파이썬 코드를 통해서 csv로 바꿨다. median_filtering_class (이하 mf.) 는 추출한 csv 파일을 읽어와 논문에서 말한 Pre-processing 방식으로 신호처리를 진행한다.
 
 ## ./model.py
-파일명에서 추측할 수 있듯이 이는 모델코드이다. 모델 설게를 위해서 쓰이는 코드로 train, test에 활용될 예정이다. 현재는 아직 개발중
+파일명에서 추측할 수 있듯이 이는 모델코드이다. 모델 설게를 위해서 쓰이는 코드로 train, test에 활용될 예정이다. 
+BBRBM 레이어를 쌓아 Train은 진행됨. GBRBM 레이어 까지 쌓고 테스트를 진행할 예정.
 
 ## ./RBM.py
 이전에는 RBM, GBRBM, BBRBM 을 나누어서 활용했으나 지금은 RBM 모델을 하나 만들고 Bernoulli 확률 분포로 넘겨주어 BBRBM 연산을 할려고 한다. Gaussian 확률 분포로 넘겨주면 GBRBM 으로 연산이 되기에 RBM하나로 왔다갔다 할 예정이다.

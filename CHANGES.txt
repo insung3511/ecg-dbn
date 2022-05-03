@@ -1,3 +1,6 @@
+# DEADLINE!
+5월 17일 까지 제작하여 accuaracy 뽑아내기
+
 May. 3. 2022. (B. InSung)
 - Tuesday Session Start and want to sleep.
 - 일단 새로운 모델로 서버에서 돌려 테스트 결과를 볼 예정.
@@ -6,6 +9,8 @@ May. 3. 2022. (B. InSung)
     G., S., T., K.P. & V., K.K. Classification of ECG beats using deep belief network and active learning. Med Biol Eng Comput 56, 1887–1898 (2018). https://doi.org/10.1007/s11517-018-1815-2
         - 에서 레이어의 갯수를 정해주고 있다. 일단은 그에 맞게 출력을 해야하니 다시 해보자고...
 - 일단 레이어 수는 맞췄음, 지금부터는 레이어수와 함께 그리고 loss 값을 토대로 입력을 해야함. 최종 결과 값은 AWS 내에서 돌려서 확인 후 출력 값으로 결정할 예정.
+- BBRBM 레이어 성공. 추후 계획은 아래에
+    - GBRBM을 설계하고 Testset으로 accuaracy 측정하여 결과값 보기.
 
 May. 2. 2022. (B. InSung)
 - Monday Session Start!
