@@ -73,7 +73,9 @@ for epoch in range(EPOCH):
         train_op.zero_grad()
         loss.backward()
         train_op.step()
-    
+    print("Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+
+
 for epoch in range(EPOCH):
     loss_ = []
     for _, (data) in enumerate(test_dataloader):
@@ -94,5 +96,5 @@ for epoch in range(EPOCH):
         loss.backward()
         train_op.step()
             
-    print("Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("Test loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
 
