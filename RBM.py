@@ -55,7 +55,7 @@ class RBM(nn.Module):
             pre_h_, h_ = self.v_to_h(v_)
         return v, v_
 
-    def free_energy(self, v):        
+    def free_energy(self, v):
         v = v.clone().unsqueeze(1).repeat(1, 10)
         v_bias = self.v_bias.clone()
         v_bias_term = torch.mv(v, v_bias)
