@@ -1,8 +1,8 @@
-from random import sample
 from sklearn.model_selection import train_test_split
 import data.medain_filtering_class as mf
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
+import matplotlib.pyplot as plt
 import torch.optim as optim
 from RBM import RBM
 import numpy as np
@@ -73,8 +73,11 @@ for epoch in range(EPOCH):
         train_op.zero_grad()
         loss.backward()
         train_op.step()
+
     print("Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
 
+plt.plot(loss_)
+plt.show()
 
 for epoch in range(EPOCH):
     loss_ = []
@@ -98,3 +101,5 @@ for epoch in range(EPOCH):
             
     print("Test loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
 
+plt.plot(loss_)
+plt.show()
