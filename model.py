@@ -237,7 +237,7 @@ for epoch in range(EPOCH):
         gb_loss_third.backward()
         gb_third_train_op.step()
 
-    output_from_third.append(gb_v3.tolist())
+    # output_from_third.append(gb_v3.tolist())
     print("3ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
 '''Test code'''
@@ -247,7 +247,7 @@ rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=B
 
 output_from_first = list()
 output_from_second = list()
-output_from_third = torch.tensor(output_from_third)
+output_from_third = list()
 
 test_loss = 0
 epoch_cnt = 0
@@ -257,8 +257,46 @@ for _, test_data in enumerate(test_dataloader):
     except RuntimeError:
         pass
     
-    data = torch.bernoulli(test_data)
+    data = torch.flatten(torch.bernoulli(test_data))
     
-    v, vt1, _ = rbm_first(data)
-    test_loss = rbm_first.free_energy(v) - rbm_first.free_energy(vt1)    
+    v1, vt1, _ = rbm_first(data)
+    test_loss = rbm_first.free_energy(v1) - rbm_first.free_energy(vt1)
+    epoch_cnt += 1
+    output_from_first.append(vt1.tolist())
+print('\tBBRBM_First_layer test loss : ', str(test_loss / epoch_cnt))
 
+'''Second BBRBM Guide Line'''
+
+output_from_first = torch.tensor(output_from_first)
+epoch_cnt = 0
+for _, test_data in enumerate(output_from_first):
+    try:
+        test_data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    data = torch.flatten(torch.bernoulli(test_data))
+    
+    v2, vt2, _ = rbm_second(data)
+    test_loss = rbm_second.free_energy(v2) - rbm_second.free_energy(vt2)
+    epoch_cnt += 1
+    output_from_second.append(vt2.tolist())
+print('\tBBRBM_Second_layer test loss : ', str(test_loss / epoch_cnt))
+
+'''Third BBRBM Guide Line'''
+
+output_from_second = torch.tensor(output_from_second)
+epoch_cnt = 0
+for _, test_data in enumerate(output_from_second):
+    try:
+        test_data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    data = torch.flatten(torch.bernoulli(test_data))
+    
+    v3, vt3, _ = rbm_second(data)
+    test_loss = rbm_second.free_energy(v3) - rbm_second.free_energy(vt3)
+    epoch_cnt += 1
+    output_from_third.append(vt3.tolist())
+print('\tBBRBM_Second_layer test loss : ', str(test_loss / epoch_cnt))
