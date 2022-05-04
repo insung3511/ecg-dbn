@@ -75,6 +75,8 @@ output_from_first = list()
 output_from_second = list()
 output_from_third = list()
 
+'''Train Part'''
+
 loss_ = []
 for epoch in range(EPOCH):
     '''First bbrbm'''
@@ -89,7 +91,7 @@ for epoch in range(EPOCH):
         sample_data = torch.flatten(sample_data.clone())
 
         # tensor binary
-        vog_first, v1 = rbm_first(sample_data)
+        vog_first, v1, mt = rbm_first(sample_data)
         
         loss_first = rbm_first.free_energy(vog_first) - rbm_first.free_energy(v1)
         loss_.append(loss_first.data)
@@ -99,8 +101,7 @@ for epoch in range(EPOCH):
         first_train_op.step()
     
     output_from_first.append(v1.tolist())
-    print(v1)
-    print("1ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("1ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
 output_from_first = torch.tensor(output_from_first)
 for epoch in range(EPOCH):
@@ -114,7 +115,7 @@ for epoch in range(EPOCH):
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
 
-        vog_second, v2 = rbm_second(sample_data)
+        vog_second, v2, mt= rbm_second(sample_data)
         
         loss_second = rbm_second.free_energy(vog_second) - rbm_second.free_energy(v2)
         loss_.append(loss_second.data)
@@ -124,8 +125,7 @@ for epoch in range(EPOCH):
         second_train_op.step()
 
     output_from_second.append(v2.tolist())
-    print(v2)
-    print("2ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("2ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
 
 output_from_second = torch.tensor(output_from_second)
 for epoch in range(EPOCH):
@@ -139,7 +139,7 @@ for epoch in range(EPOCH):
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
 
-        vog_third, v3 = rbm_third(sample_data)
+        vog_third, v3, mt = rbm_third(sample_data)
         
         loss_third = rbm_third.free_energy(vog_third) - rbm_third.free_energy(v3)
         loss_.append(loss_third.data)
@@ -149,8 +149,7 @@ for epoch in range(EPOCH):
         third_train_op.step()
 
     output_from_third.append(v3.tolist())
-    print(v3)
-    print("3ST BBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("3ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
     
 print("BBRBM is done.")
 print("GBRBM is start")
@@ -179,7 +178,7 @@ for epoch in range(EPOCH):
         sample_data = torch.flatten(sample_data.clone())
         print(sample_data)
 
-        gb_vog_first, gb_v1 = rbm_first(sample_data)
+        gb_vog_first, gb_v1, mt = rbm_first(sample_data)
         
         gb_loss_first = rbm_first.free_energy(gb_vog_first) - rbm_first.free_energy(gb_v1)
         loss_.append(gb_loss_first.data)
@@ -189,8 +188,7 @@ for epoch in range(EPOCH):
         gb_first_train_op.step()
 
     output_from_first.append(gb_v1.tolist())
-    print(gb_v1)
-    print("1ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("1ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
 output_from_first = torch.tensor(output_from_first)
 for epoch in range(EPOCH):
@@ -206,7 +204,7 @@ for epoch in range(EPOCH):
         sample_data = torch.flatten(sample_data.clone())
         print(sample_data)
 
-        gb_vog_second, gb_v2 = rbm_second(sample_data)
+        gb_vog_second, gb_v2, mt = rbm_second(sample_data)
         
         gb_loss_second = rbm_second.free_energy(gb_vog_second) - rbm_second.free_energy(gb_v2)
         loss_.append(gb_loss_second.data)
@@ -216,8 +214,7 @@ for epoch in range(EPOCH):
         gb_second_train_op.step()
 
     output_from_second.append(gb_v2.tolist())
-    print(gb_v2)
-    print("2ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    print("2ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
 output_from_second = torch.tensor(output_from_second)
 for epoch in range(EPOCH):
@@ -231,9 +228,8 @@ for epoch in range(EPOCH):
         # CHANGED to GAUSSIAN
         sample_data = torch.normal(mean=data, std=gaussian_std)
         sample_data = torch.flatten(sample_data.clone())
-        print(sample_data)
 
-        gb_vog_third, gb_v3 = rbm_third(sample_data)
+        gb_vog_third, gb_v3, mt = rbm_third(sample_data)
         
         gb_loss_third = rbm_third.free_energy(gb_vog_third) - rbm_second.free_energy(gb_v3)
         loss_.append(gb_loss_third.data)
@@ -242,8 +238,7 @@ for epoch in range(EPOCH):
         gb_loss_third.backward()
         gb_third_train_op.step()
 
-    output_from_second.append(gb_v3.tolist())
-    print(gb_v3)
-    print("3ST GBrbm_first Training loss for {0} epoch {1}".format(epoch, np.mean(loss_)))
+    output_from_third.append(gb_v3.tolist())
+    print("3ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
-
+show_adn_save(gb_v3)

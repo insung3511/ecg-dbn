@@ -1,10 +1,11 @@
+from datetime import datetime
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.utils.data
 import torch.nn as nn
-import torch
 import numpy as np
-
+import timeit
+import torch
 class RBM(nn.Module):
     def __init__(self, n_vis, n_hid, k, batch):
         super(RBM, self).__init__()
@@ -47,13 +48,15 @@ class RBM(nn.Module):
         return p_v, sample_v
     
     def forward(self, v):
+        start_time = datetime.now()
         pre_h1, h1 = self.v_to_h(v)
         h_ = h1
 
         for _ in range(self.k):
             pre_v_, v_ = self.h_to_v(h_)
             pre_h_, h_ = self.v_to_h(v_)
-        return v, v_
+        estimate_time = datetime.now() - start_time
+        return v, v_, estimate_time
 
     def free_energy(self, v):
         v = v.clone().unsqueeze(1).repeat(1, 10)

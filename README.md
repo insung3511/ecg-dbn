@@ -4,7 +4,165 @@ ECG Singal data를 받아 DBN 으로 각 Feature를 뽑아내는 인공지능 �
 GB-DBN은 RBM를 여러겹 쌓은 Deep Learning Machine이기에 학습을 시키기 위해서는 RBM 모델이 여러개가 필요하다. 즉, 여러개의 RBM 모델을 쌓아 DBN을 만드는 것이기에 여기서 중요한 부분은 확률 분포 모델을 어떤 것을 활용하냐이다. Bernouli 확률 분포는 가장 기본적인 RBM의 확률 분포 모델이고 GB-RBM은 Gaussian 확률 분포를 활용한 모델이다. GB-DBN도 이름에서 알 수 있듯 Gaussian 확률 분포를 활용하였기에 GB-RBM과 BB-RBM를 같이 활용하여 구성된다. 
 
 # Directory
+Last Updated : May. 4th. 2022
+```
+.
+├── CHANGES.txt
+├── LICENSE
+├── RBM.py
+├── README.md
+├── __pycache__
+│   └── RBM.cpython-39.pyc
+├── arc
+│   ├── BBRBM.py
+│   ├── GBRBM.py
+│   ├── RBM.py
+│   └── model.py
+├── data
+│   ├── db1
+│   │   ├── 100.atr
+│   │   ├── ...
+│   │   ├── mitdbdir
+│   │   │   ├── foreword.htm
+│   │   │   ├── intro.htm
+│   │   │   ├── mitdbdir.htm
+│   │   │   ├── records.htm
+│   │   │   ├── samples
+│   │   │   │   ├── 1001103.xws
+│   │   │   │   ├── ...
+│   │   │   │   └── 2342317.xws
+│   │   │   ├── src
+│   │   │   │   ├── makefile
+│   │   │   │   └── printdir.bat
+│   │   │   └── tables.htm
+│   │   └── x_mitdb
+│   │       ├── ANNOTATORS
+│   │       ├── ...
+│   │       └── x_234.hea
+│   ├── db2
+│   │   ├── 200.atr
+│   │   ├── ...
+│   │   ├── mitdbdir
+│   │   │   ├── foreword.htm
+│   │   │   ├── intro.htm
+│   │   │   ├── mitdbdir.htm
+│   │   │   ├── records.htm
+│   │   │   ├── samples
+│   │   │   │   ├── 1001103.xws
+│   │   │   │   ├── ...
+│   │   │   │   └── 2342317.xws
+│   │   │   ├── src
+│   │   │   │   ├── makefile
+│   │   │   │   └── printdir.bat
+│   │   │   └── tables.htm
+│   │   ├── record_converter.py
+│   │   └── x_mitdb
+│   │       ├── ANNOTATORS
+│   │       ├── RECORDS
+│   │       ├── x_108.atr
+│   │       ├── ...
+│   │       └── x_234.hea
+│   ├── db3
+│   │   ├── svdb
+│   │   │   ├── 800.atr
+│   │   │   ├── ...
+│   │   │   └── result_nst_old
+│   │   └── svdb_result
+│   │       └── svdb
+│   │           ├── rdann_svdb800.csv
+│   │           ├── ...
+│   │           ├── rdann_svdb894.csv
+│   │           ├── rdsamp_svdb800.csv
+│   │           ├── ...
+│   │           └── rdsamp_svdb894.csv
+│   ├── final_db1
+│   │   ├── 101.csv
+│   │   ├── ...
+│   │   └── 230.csv
+│   ├── final_db2
+│   │   ├── 100.csv
+│   │   ├── ...
+│   │   └── 234.csv
+│   ├── final_db3
+│   │   ├── rdann_svdb800.csv
+│   │   ├── ...
+│   │   ├── rdann_svdb894.csv
+│   │   ├── rdsamp_svdb800.csv
+│   │   ├── ...
+│   │   └── rdsamp_svdb894.csv
+│   ├── medain_filtering_class.py
+│   ├── test
+│   │   ├── 800.atr
+│   │   ├── 800.dat
+│   │   ├── 800.hea
+│   │   ├── 800.hea-
+│   │   └── 800.xws
+│   └── unify
+│       ├── 0001.atr
+│       ├── 0001.dat
+│       ├── 0001.hea
+│       ├── aha
+│       │   ├── 0001.atr
+│       │   ├── 0001.dat
+│       │   ├── 0001.hea
+│       │   ├── 0201.atr
+│       │   ├── 0201.dat
+│       │   └── 0201.hea
+│       ├── convert.py
+│       ├── converter.py
+│       ├── just_unify.py
+│       ├── offical_rdann.py
+│       ├── rdann
+│       ├── rdann.c
+│       ├── rdsamp
+│       ├── rdsamp.c
+│       ├── record_convert_old.py
+│       ├── result
+│       │   ├── 0001_rdann.csv
+│       │   ├── 0201_rdann.csv
+│       │   ├── converted_csv0001.csv
+│       │   ├── converted_csv0201.csv
+│       │   ├── converted_txt0001.txt
+│       │   └── converted_txt0201.txt
+│       └── result.zip
+├── model.ipynb
+├── model.py
+├── outfile_filtered.csv
+├── record_all
+│   ├── ahadb
+│   │   └── 1.0.0
+│   │       ├── 0001.atr
+│   │       ├── ...
+│   │       └── SHA256SUMS.txt
+│   ├── cudb
+│   │   └── 1.0.0
+│   │       ├── ANNOTATORS
+│   │       ├── ...
+│   │       └── cu35.xws
+│   ├── edb
+│   │   └── 1.0.0
+│   │       ├── ANNOTATORS
+│   │       ├── ...
+│   │       ├── e1304.hea
+│   │       └── edb.txt
+│   ├── nstdb
+│   │   └── 1.0.0
+│   │       ├── 118e00.atr
+│   │       ├── ...
+│   │       ├── nstdbgen-
+│   │       └── old
+│   │           ├── 118_02.dat
+│   │           ├── ...
+│   │           └── old
+│   ├── rdann
+│   ├── rdann.c
+│   ├── rdsamp
+│   ├── rdsamp.c
+│   └── record_converter.py
+└── tree.txt
 
+36 directories, 2545 files
+```
 
 # Code description
 ## ./record_all/record_converter.py
@@ -15,7 +173,7 @@ ecg-csv repo에 있는 코드를 활용한 것으로 ECG Database 들을 활용�
 
 ## ./model.py
 파일명에서 추측할 수 있듯이 이는 모델코드이다. 모델 설게를 위해서 쓰이는 코드로 train, test에 활용될 예정이다. 
-BBRBM 레이어를 쌓아 Train은 진행됨. GBRBM 레이어 까지 쌓고 테스트를 진행할 예정.
+BBRBM, GBRBM 레이어 쌓음. 학습 진행 후 결과를 보고 마져 진행 예정
 
 ## ./RBM.py
 이전에는 RBM, GBRBM, BBRBM 을 나누어서 활용했으나 지금은 RBM 모델을 하나 만들고 Bernoulli 확률 분포로 넘겨주어 BBRBM 연산을 할려고 한다. Gaussian 확률 분포로 넘겨주면 GBRBM 으로 연산이 되기에 RBM하나로 왔다갔다 할 예정이다.

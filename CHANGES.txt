@@ -3,6 +3,7 @@
 
 May. 4. 2022 (B. InSung)
 - BBRBM 3개, GBRBM 3개 모두 쌓아서 Train Code 완성. AWS 내에서 테스트 할 예정
+- 학습과정 중에 실수가 있었음. 실수로 인한 오류가 많아서 주피터 노트북으로 이전하여 부분적 디버깅으로 진행 예정.
 
 May. 3. 2022. (B. InSung)
 - Tuesday Session Start and want to sleep.
