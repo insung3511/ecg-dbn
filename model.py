@@ -176,7 +176,6 @@ for epoch in range(EPOCH):
         # CHANGED to GAUSSIAN
         sample_data = torch.normal(mean=data, std=gaussian_std)
         sample_data = torch.flatten(sample_data.clone())
-        print(sample_data)
 
         gb_vog_first, gb_v1, mt = rbm_first(sample_data)
         
@@ -202,7 +201,6 @@ for epoch in range(EPOCH):
         # CHANGED to GAUSSIAN
         sample_data = torch.normal(mean=data, std=gaussian_std)
         sample_data = torch.flatten(sample_data.clone())
-        print(sample_data)
 
         gb_vog_second, gb_v2, mt = rbm_second(sample_data)
         
@@ -216,6 +214,7 @@ for epoch in range(EPOCH):
     output_from_second.append(gb_v2.tolist())
     print("2ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
+output_from_third = list(output_from_third)
 output_from_second = torch.tensor(output_from_second)
 for epoch in range(EPOCH):
     '''Third gbrbm'''
@@ -241,4 +240,25 @@ for epoch in range(EPOCH):
     output_from_third.append(gb_v3.tolist())
     print("3ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
-show_adn_save(gb_v3)
+'''Test code'''
+rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
+rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
+rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
+
+output_from_first = list()
+output_from_second = list()
+output_from_third = torch.tensor(output_from_third)
+
+test_loss = 0
+epoch_cnt = 0
+for _, test_data in enumerate(test_dataloader):
+    try:
+        test_data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    data = torch.bernoulli(test_data)
+    
+    v, vt1, _ = rbm_first(data)
+    test_loss = rbm_first.free_energy(v) - rbm_first.free_energy(vt1)    
+

@@ -70,3 +70,6 @@ class RBM(nn.Module):
         hidden_term = wx_b.exp().add(1).log().sum(1)
         
         return (-(hidden_term) - v_bias_term).mean()
+    
+    def get_weight(self):
+        return self.W
