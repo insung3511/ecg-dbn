@@ -1,5 +1,7 @@
 # DEADLINE!
 5월 17일 까지 제작하여 accuaracy 뽑아내기
+May. 5. 2022 (B. InSung)
+- Linear 모델 까지 통과, 이제 정상 비트냐 이소성 비트냐만 결과 도출하면 끝
 
 May. 4. 2022 (B. InSung)
 - BBRBM 3개, GBRBM 3개 모두 쌓아서 Train Code 완성. AWS 내에서 테스트 할 예정
