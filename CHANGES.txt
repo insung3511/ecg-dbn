@@ -3,6 +3,11 @@
 May. 5. 2022 (B. InSung)
 - Linear 모델 까지 통과, 이제 정상 비트냐 이소성 비트냐만 결과 도출하면 끝
 
+May. 8. 2022 (B. InSung)
+- Sunday Home session start.
+- 이전에 짜둔 linear 코드는 SVM 을 거치지 않고 그냥 선형만 거치는 코드였다. 문제를 파악하고 새로운 SVM.py 코드 생성
+    - RBM과 마찬가지로 메소드로 끌어와 작성할 예정
+
 May. 6. 2022 (B. InSung)
 - Friday Session start.
 
