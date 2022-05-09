@@ -1,4 +1,3 @@
-# %%
 from sklearn.model_selection import KFold, train_test_split
 import torch.distributions.distribution as D
 import data.medain_filtering_class as mf
@@ -23,7 +22,6 @@ VISIBLE_UNITS = [180, 200, 250]
 HIDDEN_UNITS = [80, 100, 120]
 K_FOLD = 1
 
-# %%
 print("[MODL] Model main code is starting....")
 
 print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
@@ -40,7 +38,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     shuffle=True
 )
 
-# %%
 train_dataloader = DataLoader(X_train + y_train,
                               batch_size=BATCH_SIZE,
                               shuffle=True)
@@ -57,7 +54,6 @@ print("y_test  length : ", len(y_test))
 train_data = torch.FloatTensor(X_train)
 test_data = torch.FloatTensor(X_test)
 
-# %%
 print("[INFO] Model object added")
 
 rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
@@ -76,7 +72,6 @@ output_from_first = list()
 output_from_second = list()
 output_from_third = list()
 
-# %%
 '''Train Part'''
 
 loss_ = []
@@ -153,7 +148,6 @@ for epoch in range(EPOCH):
     output_from_third.append(v3.tolist())
     print("3ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
 
-# %%
     
 print("BBRBM is done.")
 print("GBRBM is start")
@@ -243,13 +237,11 @@ for epoch in range(EPOCH):
     print("3ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
 
 
-# %%
 nprst = gb_v3.detach().numpy()
 print(nprst)
 
 rbm_first.get_weight()
 
-# %%
 test_loss = 0
 train_loss = 0
 train_cnt = 0
@@ -280,7 +272,6 @@ print('Test loss : ' + str(test_loss / summary_c))
 print('Train - test : ' + str(train_loss - test_loss))
 
 
-# %%
 '''Test code'''
 rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
 rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
@@ -293,7 +284,6 @@ output_from_third = list()
 test_loss = 0
 epoch_cnt = 0
 
-# %%
 '''First BBRBM Guide Line'''
 
 for _, data in enumerate(test_dataloader):
@@ -342,7 +332,6 @@ for _, data in enumerate(torch.tensor(output_from_second)):
     output_from_third.append(vt3.tolist())
 print('\tBBRBM_Third_layer test loss : ', str(test_loss / epoch_cnt))
 
-# %%
 rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
 rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
 rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
@@ -353,7 +342,6 @@ output_from_second = list()
 test_loss = 0
 epoch_cnt = 0
 
-# %%
 '''First GBRBM Guide Line'''
 epoch_cnt = 0
 for _, data in enumerate(torch.tensor(output_from_third)):
@@ -392,7 +380,7 @@ output_from_third = []
 for _, data in enumerate(torch.tensor(output_from_second)):
     try:
         test_data = torch.tensor(Variable(data.clone().detach().requires_grad_(True).view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-    except RuntimeError:
+    except RuntimeError:    
         pass
     
     sample_data = torch.flatten(torch.bernoulli(test_data))
@@ -403,20 +391,12 @@ for _, data in enumerate(torch.tensor(output_from_second)):
     output_from_third.append(vt3.tolist())
 print('\tGBRBM_Third_layer test loss : ', str(test_loss / epoch_cnt))
 
-# %%
 lin = nn.Linear(len(output_from_third), 4)
 # print("Linear_in size : {}, Linear_in dim : {}".format(linear_in.size(), linear_in.dim()))
 
 # print(lin(linear_in.T))
 
-# %%
 X = torch.tensor(output_from_third)
-
 X = (X - X.mean()) / X.std()
+
 svm_model(X, X, lin, EPOCH, BATCH_SIZE)
-
-
-# %%
-
-
-
