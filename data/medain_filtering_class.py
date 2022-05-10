@@ -17,6 +17,7 @@ FINAL_DB2_COLUMMS = ['MLII', 'V1', 'V2', 'V5']
 db1_file_list = []
 db2_file_list = []
 db3_file_list = []
+db1_file_list_ann = []
 
 result_db1_list = []
 result_db2_list = []

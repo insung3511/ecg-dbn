@@ -148,17 +148,7 @@ for epoch in range(EPOCH):
     output_from_third.append(v3.tolist())
     print("3ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
 
-    
-print("BBRBM is done.")
-print("GBRBM is start")
-
-output_from_first = list()
-output_from_second = list()
-output_from_third = torch.tensor(output_from_third)
-
-rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
-rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
-rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
+ 
 
 # print(output_from_third.size(), output_from_third.dim(), "\n", output_from_third)
 gaussian_std = torch.arange(1, 0, -0.1)
@@ -399,4 +389,4 @@ lin = nn.Linear(len(output_from_third), 4)
 X = torch.tensor(output_from_third)
 X = (X - X.mean()) / X.std()
 
-svm_model(X, X, lin, EPOCH, BATCH_SIZE)
+print(X.shape)
