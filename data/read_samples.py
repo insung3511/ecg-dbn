@@ -39,7 +39,7 @@ def return_list():
     global db2_signals
     global db3_signals
     global db1_anno
-    global db2_anno
+    global db2_anno 
     global db3_anno
     '''DB1
     '''
@@ -63,7 +63,7 @@ def return_list():
         signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
         annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
 
-        db1_signals.append(signals)
+        db1_signals.append(signals.tolist())
         db1_anno.append(annotation.symbol)
 
     '''DB2
@@ -88,7 +88,7 @@ def return_list():
         signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
         annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
 
-        db2_signals.append(signals)
+        db2_signals.append(signals.tolist())
         db2_anno.append(annotation.symbol)
 
     '''DB3
@@ -113,33 +113,36 @@ def return_list():
         signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
         annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
 
-        db3_signals.append(signals)
+        db3_signals.append(signals.tolist())
         db3_anno.append(annotation.symbol)
 
     db1_butter = list()
     db2_butter = list()
     db3_butter = list()
 
-    db1_butter = db1_signals
-    db2_butter = db2_signals
-    db3_butter = db3_signals
+    # db1_butter = db1_signals
+    # db2_butter = db2_signals
+    # db3_butter = db3_signals
 
     print("[INFO] DB1 Filtering...")
     for i in range(len(db1_signals)):
-        db1_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db1_signals[i])))
+        print(len(db1_signals[i]))
+        db1_butter.append(butter_lowpass(3.667, (db1_signals[i])))
     
     print("[INFO] DB2 Filtering...")
     for i in range(len(db2_signals)):
-        db2_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db2_signals[i])))
+        print(len(db2_signals[i]))
+        db2_butter.append(butter_lowpass(3.667, (db2_signals[i])))
 
     print("[INFO] DB3 Filtering...")
     for i in range(len(db3_signals)):
-        db3_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db3_signals[i])))
+        print(len(db3_signals[i]))
+        db3_butter.append(butter_lowpass(3.667, (db3_signals[i])))
 
     print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
           "DB2 butter size : {}, DB2 Anno size : {}\n".format(len(db2_butter), len(db2_anno)),    \
           "DB3 butter size : {}, DB3 Anno size : {}\n".format(len(db3_butter), len(db3_anno)))
-    
+
     return db1_butter, db1_anno, db2_butter, db2_anno, db3_butter, db3_anno
 
 # return_list()

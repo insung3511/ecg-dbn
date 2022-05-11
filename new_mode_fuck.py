@@ -1,71 +1,67 @@
-# %%
-from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
-from torch.utils.data import DataLoader, Subset
+from sklearn.model_selection import KFold, train_test_split
 import torch.distributions.distribution as D
+import data.medain_filtering_class as mf
+from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 import data.read_samples as rs
 import torch.optim as optim
-from SVM import svm_model
-import torch.nn as nn
 from RBM import RBM
 import numpy as np
 import datetime
 import torch
 
-# %%
 print(datetime.datetime.now(), "model.py code start")
 
 BATCH_SIZE = 10
-EPOCH = 90
+EPOCH = 100
 LEARNING_RATE = 0.2
 ANNEALING_RATE = 0.999
 VISIBLE_UNITS = [180, 200, 250]
 HIDDEN_UNITS = [80, 100, 120]
 K_FOLD = 1
 
-# %%
-print("[MODL] Model main code is starting....")
-print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
+def show_adn_save(result, file_name=None):
+    nprst = np.array(result)
+    f = ".txt" % file_name
+    print(nprst)
 
-# %%
+print("[MODL] Model main code is starting....")
+
+print("[INFO] Read train data, cross-vaildation data and test data from median filtering code")
+dataset_db1, dataset_db2, dataset_db3 = mf.ecg_filtering(True)
 db1_sig, db1_label, db2_sig, db2_label, db3_sig, db3_label = rs.return_list()
 
-# %%
-X = (db1_sig + db2_sig)
-y = db1_label + db1_label
-match_number = -(len(X) - len(y))
+train_dataset = list(mf.list_to_list(dataset_db1)) * 4
+cross_dataset = list(mf.list_to_list(dataset_db2)) * 4
+test_dataset = list(mf.list_to_list(dataset_db3))  * 4
 
-X = (db1_sig + db2_sig)[:match_number]
-y = db1_label + db1_label
+size_str = '''
+{} {} {} {} {} {} 
+{} {} {}
+'''.format(len(db1_sig), len(db1_label), len(db2_sig), len(db2_label), len(db3_sig), len(db3_label),
+            len(train_dataset), len(cross_dataset), len(test_dataset))
+print(size_str)
 
-# %%
 X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
+    (db1_sig + db2_sig), 
+    (db1_label + db2_label),
+    test_size=0.33,
     shuffle=True
 )
 
-print("X_train length : ", len(X_train))
-print("X_test  length : ", len(X_test))
-print("y_train length : ", len(y_train))
-print("y_test  length : ", len(y_test))
+print()
 
-# %%
-# train_dataloader = DataLoader(X_train,
-#                             batch_size=BATCH_SIZE,
-#                               shuffle=True,v
-#                               collate_fn=lambda x: x)
+train_dataloader = DataLoader(X_train,
+                              batch_size=BATCH_SIZE,
+                              num_workers=0, collate_fn=lambda x: x,
+                              shuffle=True)
 
-# test_dataloader = DataLoader(X_test,
-#                              batch_size=BATCH_SIZE,
-#                              shuffle=True,
-#                              collate_fn=lambda x: x)
+test_dataloader = DataLoader(X_test,
+                             batch_size=BATCH_SIZE,
+                             shuffle=True)
 
-# %%
-print("[INFO] Model object added")
-
-rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=1300000)
+rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
 rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
 rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
 
@@ -81,21 +77,23 @@ output_from_first = list()
 output_from_second = list()
 output_from_third = list()
 
-# %%
-# print(train_dataloader)
-
-# %%
-
 '''Train Part'''
 
 loss_ = []
 for epoch in range(EPOCH):
     '''First bbrbm'''
-    for _, (data) in enumerate(X_train):
-        data = torch.tensor(data).uniform_(0, 1)
+    for _, (data) in enumerate(train_dataloader):
+        try:
+            data = Variable(torch.tensor(data, dtype=torch.float32)).uniform_(0, 1)
+            print("Success")
+        except ValueError:
+            print("Fail")
+            pass
+        print((rs.list_to_list(data)))
+
+        data = torch.tensor(rs.list_to_list(data))
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
-        print(sample_data.size())
 
         # tensor binary
         vog_first, v1, mt = rbm_first(sample_data)
@@ -109,68 +107,3 @@ for epoch in range(EPOCH):
     
     output_from_first.append(v1.tolist())
     print("1ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, np.mean(loss_), mt))
-
-# %%
-
-output_from_first = torch.tensor(output_from_first)
-for epoch in range(EPOCH):
-    '''Secnd bbrbm'''
-    for _, (data) in enumerate(output_from_first):
-        # try:
-        #     data = torch.float32(data)
-        #     # data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-        # except RuntimeError:
-        #     continue
-
-        data = torch.tensor(data).uniform_(1.0, 0.02)
-        sample_data = torch.bernoulli(data)
-        sample_data = torch.flatten(sample_data.clone())
-
-        vog_second, v2, mt = rbm_second(sample_data)
-        
-        loss_second = rbm_second.free_energy(vog_second) - rbm_second.free_energy(v2)
-        loss_.append(loss_second.data)
-        
-        second_train_op.zero_grad()
-        loss_second.backward()
-        second_train_op.step()
-
-    output_from_second.append(v2.tolist())
-    print("2ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
-
-output_from_second = torch.tensor(output_from_second)
-for epoch in range(EPOCH):
-    '''Third bbrbm'''
-    for _, (data) in enumerate(output_from_second):
-        try:
-            data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
-        except RuntimeError:
-            continue
-
-        sample_data = torch.bernoulli(data)
-        sample_data = torch.flatten(sample_data.clone())
-
-        vog_third, v3, mt = rbm_third(sample_data)
-        
-        loss_third = rbm_third.free_energy(vog_third) - rbm_third.free_energy(v3)
-        loss_.append(loss_third.data)
-        
-        third_train_op.zero_grad()
-        loss_third.backward()
-        third_train_op.step()
-
-    output_from_third.append(v3.tolist())
-    print("3ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : ".format(epoch, np.mean(loss_), mt))
-
-# %%
-print("GBRBM is start")
-
-output_from_first = list()
-output_from_second = list()
-output_from_third = torch.tensor(output_from_third)
-
-rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
-rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
-rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
-
-

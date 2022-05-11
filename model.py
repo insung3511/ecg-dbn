@@ -81,11 +81,13 @@ loss_ = []
 for epoch in range(EPOCH):
     '''First bbrbm'''
     for _, (data) in enumerate(train_dataloader):
+        print(data)
         try:
-            # tnesor float
+            # tensor float
             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
         except RuntimeError:
             continue
+        print(data)
 
         sample_data = torch.bernoulli(data)
         sample_data = torch.flatten(sample_data.clone())
@@ -172,7 +174,7 @@ for epoch in range(EPOCH):
             data = torch.tensor(Variable(data.view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
         except RuntimeError:
             continue
-        
+
         # CHANGED to GAUSSIAN
         sample_data = torch.normal(mean=data, std=gaussian_std)
         sample_data = torch.flatten(sample_data.clone())
@@ -299,4 +301,65 @@ for _, test_data in enumerate(output_from_second):
     test_loss = rbm_second.free_energy(v3) - rbm_second.free_energy(vt3)
     epoch_cnt += 1
     output_from_third.append(vt3.tolist())
-print('\tBBRBM_Second_layer test loss : ', str(test_loss / epoch_cnt))
+print('\tBBRBM_Third_layer test loss : ', str(test_loss / epoch_cnt))
+
+''' GBRBM Test Layer'''
+
+rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
+rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
+rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
+
+output_from_first = list()
+output_from_second = list()
+
+test_loss = 0
+epoch_cnt = 0
+
+'''First GBRBM Guide Line'''
+epoch_cnt = 0
+for _, data in enumerate(torch.tensor(output_from_third)):
+    try:
+        test_data = torch.tensor(Variable(data.clone().detach().requires_grad_(True).view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    sample_data = torch.flatten(torch.normal(mean=data, std=gaussian_std))
+
+    v1, vt1, _ = rbm_first(sample_data)
+    test_loss += rbm_first.free_energy(v1) - rbm_first.free_energy(vt1)
+    epoch_cnt += 1
+    output_from_first.append(vt1.tolist())
+print('\tGBRBM_First_layer test loss : ', str(test_loss / epoch_cnt))
+
+'''Second BBRBM Guide Line'''
+
+for _, data in enumerate(torch.tensor(output_from_first)):
+    try:
+        test_data = torch.tensor(Variable(data.clone().detach().requires_grad_(True).view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    sample_data = torch.flatten(torch.normal(mean=data, std=gaussian_std))
+    
+    v2, vt2, _ = rbm_second(sample_data)
+    test_loss += rbm_second.free_energy(v2) - rbm_second.free_energy(vt2)
+    epoch_cnt += 1
+    output_from_second.append(vt2.tolist())
+print('\tGBRBM_Second_layer test loss : ', str(test_loss / epoch_cnt))
+
+'''Third BBRBM Guide Line'''
+
+output_from_third = []
+for _, data in enumerate(torch.tensor(output_from_second)):
+    try:
+        test_data = torch.tensor(Variable(data.clone().detach().requires_grad_(True).view(-1, BATCH_SIZE).uniform_(0, 1)), dtype=torch.float32)
+    except RuntimeError:
+        pass
+    
+    sample_data = torch.flatten(torch.bernoulli(test_data))
+    
+    v3, vt3, _ = rbm_third(sample_data)
+    test_loss += rbm_third.free_energy(v3) - rbm_third.free_energy(vt3)
+    epoch_cnt += 1
+    output_from_third.append(vt3.tolist())
+print('\tGBRBM_Third_layer test loss : ', str(test_loss / epoch_cnt))
