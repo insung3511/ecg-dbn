@@ -124,17 +124,17 @@ def return_list():
     db2_butter = db2_signals
     db3_butter = db3_signals
 
-    # print("[INFO] DB1 Filtering...")
-    # for i in range(len(db1_signals)):
-    #     db1_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db1_signals[i])))
+    print("[INFO] DB1 Filtering...")
+    for i in range(len(db1_signals)):
+        db1_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db1_signals[i])))
     
-    # print("[INFO] DB2 Filtering...")
-    # for i in range(len(db2_signals)):
-    #     db2_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db2_signals[i])))
+    print("[INFO] DB2 Filtering...")
+    for i in range(len(db2_signals)):
+        db2_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db2_signals[i])))
 
-    # print("[INFO] DB3 Filtering...")
-    # for i in range(len(db3_signals)):
-    #     db3_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db3_signals[i])))
+    print("[INFO] DB3 Filtering...")
+    for i in range(len(db3_signals)):
+        db3_butter.append(butter_lowpass(3.667, np.ndarray.tolist(db3_signals[i])))
 
     print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
           "DB2 butter size : {}, DB2 Anno size : {}\n".format(len(db2_butter), len(db2_anno)),    \
