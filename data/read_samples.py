@@ -126,17 +126,14 @@ def return_list():
 
     print("[INFO] DB1 Filtering...")
     for i in range(len(db1_signals)):
-        print(len(db1_signals[i]))
         db1_butter.append(butter_lowpass(3.667, (db1_signals[i])))
     
     print("[INFO] DB2 Filtering...")
     for i in range(len(db2_signals)):
-        print(len(db2_signals[i]))
         db2_butter.append(butter_lowpass(3.667, (db2_signals[i])))
 
     print("[INFO] DB3 Filtering...")
     for i in range(len(db3_signals)):
-        print(len(db3_signals[i]))
         db3_butter.append(butter_lowpass(3.667, (db3_signals[i])))
 
     print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \

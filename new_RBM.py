@@ -5,15 +5,14 @@ import torch.utils.data
 import torch.nn as nn
 import torch
 
-SIZE = 10
-
-class RBM(nn.Module):
+class new_RBM(nn.Module): 
     global SIZE
+    cuda = torch.device('cuda')
     def __init__(self, n_vis, n_hid, k, batch):
-        super(RBM, self).__init__()
-        self.W      = nn.Parameter(torch.randn(1, batch) * 1e-2)
-        self.v_bias = nn.Parameter(torch.zeros(batch))
-        self.h_bias = nn.Parameter(torch.zeros(batch))
+        super(new_RBM, self).__init__()
+        self.W      = nn.Parameter(torch.randn(1, 13000000) * 1e-2)
+        self.v_bias = nn.Parameter(torch.zeros(13000000))
+        self.h_bias = nn.Parameter(torch.zeros(13000000))
         self.k      = k
         self.batch  = batch
     
@@ -22,31 +21,33 @@ class RBM(nn.Module):
             torch.sign(
                 p - Variable(torch.randn(p.size()))
             )
-        )
+        ).cuda()
 
-    #                v is input data from visible layer
+    ''' ISSUE PART '''
     def v_to_h(self, v):
-        h_bias = (self.h_bias.clone()).expand(SIZE)
-        # v = v.clone().repeat(130000)
-        w = self.W.clone().repeat(SIZE, 1)
+        v = (v.clone().detach()).reshape(-1, 13000000)
+        h_bias = (self.h_bias.clone())        
+        w = (self.W.clone())
 
+        size_msg = '''
+        {} {} {}
+        '''.format(torch.flatten(v).size(), torch.flatten(w).size(), h_bias.size())
+        print(size_msg)
+        
         p_h = F.sigmoid(
-            F.linear(v, w, bias=h_bias)
-        )
+            F.linear(torch.flatten(v), torch.flatten(w), bias=h_bias)
+        ).cuda()
 
-        # p_h = F.sigmoid(
-        #     F.linear(v, torch.flatten(self.W), self.h_bias)
-        # )        
         sample_h = self.sample_from_p(p_h)
         return p_h, sample_h
 
     def h_to_v(self, h):
-        # v_bias = (self.v_bias.clone())
-        w = self.W.t().clone().repeat(1, SIZE)
+        w = self.W.t().clone()
 
         p_v = F.sigmoid(
             F.linear(h, w, self.v_bias)
-        )
+        ).cuda()
+        
         sample_v = self.sample_from_p(p_v)
         return p_v, sample_v
     
@@ -62,14 +63,10 @@ class RBM(nn.Module):
         return v, v_, estimate_time
 
     def free_energy(self, v):
-        v = v.clone().unsqueeze(1).repeat(1, SIZE)
-        v_bias = self.v_bias.clone()
-        v_bias_term = torch.mv(v, self.v_bias)
-
+        v_bias_term = torch.mv(v, self.v_bias).cuda()
         h_bias = self.h_bias.clone()
-        w = self.W.clone().repeat(SIZE, 1)
         
-        wx_b = F.linear(v, w, h_bias)
+        wx_b = F.linear(v, self.W, h_bias).cuda()
         hidden_term = wx_b.exp().add(1).log().sum(1)
         
         return (-(hidden_term) - v_bias_term).mean()

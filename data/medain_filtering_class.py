@@ -202,33 +202,32 @@ def ecg_filtering(path_bool = False):
     
     low_passed_db1 = butter_lowpass(3.667, final_db1_list[0])
     low_passed_db2 = butter_lowpass(3.667, final_db2_list[0])
-    low_passed_db3 = butter_lowpass(3.667, final_db3_list[0])
     print("[DONE] Pre-processing is done.")
 
-    try:        
-        # final_csv_dict = {
-        #     'dataset_1' : final_db1_list[0],
-        #     'dataset_2' : final_db2_list[0],
-        #     'dataset_3' : final_db3_list[0]
-        # }
-        final_csv_dict = {
-            'result' : low_passed_db1[0]
-        }
+    # try:        
+    #     # final_csv_dict = {
+    #     #     'dataset_1' : final_db1_list[0],
+    #     #     'dataset_2' : final_db2_list[0],
+    #     #     'dataset_3' : final_db3_list[0]
+    #     # }
+    #     final_csv_dict = {
+    #         'result' : low_passed_db1[0]
+    #     }
 
-        df_f = pd.DataFrame(final_csv_dict)
-        df_f.to_csv('outfile_filtered.csv')
+    #     df_f = pd.DataFrame(final_csv_dict)
+    #     df_f.to_csv('outfile_filtered.csv')
 
-        og_csv_dict = {
-            'MLII' : mlii_list,
-            'ECG' : ecg_list
-        }
+    #     og_csv_dict = {
+    #         'MLII' : mlii_list,
+    #         'ECG' : ecg_list
+    #     }
 
-        df_og = pd.DataFrame(og_csv_dict)
-        df_og.to_csv('outfile_original.csv')
+    #     df_og = pd.DataFrame(og_csv_dict)
+    #     df_og.to_csv('outfile_original.csv')
 
-        return low_passed_db1, low_passed_db2, low_passed_db3
+    #     return low_passed_db1, low_passed_db2
     
-    except ValueError:
-        print("[ERRR] Got a issue with create file")    
+    # except ValueError:
+    #     print("[ERRR] Got a issue with create file")    
         
-        return low_passed_db1, low_passed_db2, low_passed_db3
+    return low_passed_db1, low_passed_db2
