@@ -3,8 +3,13 @@
 ├── LICENSE
 ├── RBM.py
 ├── README.md
+├── SVM.py
 ├── __pycache__
-│   └── RBM.cpython-39.pyc
+│   ├── RBM.cpython-38.pyc
+│   ├── RBM.cpython-39.pyc
+│   ├── SVM.cpython-39.pyc
+│   └── new_RBM.cpython-39.pyc
+├── allnew_model.ipynb
 ├── arc
 │   ├── BBRBM.py
 │   ├── GBRBM.py
@@ -13,8 +18,10 @@
 ├── data
 │   ├── __pycache__
 │   │   ├── again_median.cpython-39.pyc
+│   │   ├── medain_filtering_class.cpython-38.pyc
 │   │   ├── medain_filtering_class.cpython-39.pyc
 │   │   ├── medfilt.cpython-39.pyc
+│   │   ├── read_samples.cpython-39.pyc
 │   │   └── so_again_median.cpython-39.pyc
 │   ├── db1
 │   │   ├── 100.atr
@@ -118,10 +125,6 @@
 │   │   ├── RECORDS
 │   │   ├── SHA256SUMS.txt
 │   │   ├── mitdbdir
-│   │   │   ├── foreword.htm
-│   │   │   ├── intro.htm
-│   │   │   ├── mitdbdir.htm
-│   │   │   ├── records.htm
 │   │   │   ├── samples
 │   │   │   │   ├── 1001103.xws
 │   │   │   │   ├── 1002513.xws
@@ -514,10 +517,9 @@
 │   │   │   │   ├── 2341702.xws
 │   │   │   │   ├── 2342126.xws
 │   │   │   │   └── 2342317.xws
-│   │   │   ├── src
-│   │   │   │   ├── makefile
-│   │   │   │   └── printdir.bat
-│   │   │   └── tables.htm
+│   │   │   └── src
+│   │   │       ├── makefile
+│   │   │       └── printdir.bat
 │   │   └── x_mitdb
 │   │       ├── ANNOTATORS
 │   │       ├── RECORDS
@@ -701,10 +703,6 @@
 │   │   ├── RECORDS
 │   │   ├── SHA256SUMS.txt
 │   │   ├── mitdbdir
-│   │   │   ├── foreword.htm
-│   │   │   ├── intro.htm
-│   │   │   ├── mitdbdir.htm
-│   │   │   ├── records.htm
 │   │   │   ├── samples
 │   │   │   │   ├── 1001103.xws
 │   │   │   │   ├── 1002513.xws
@@ -1097,10 +1095,9 @@
 │   │   │   │   ├── 2341702.xws
 │   │   │   │   ├── 2342126.xws
 │   │   │   │   └── 2342317.xws
-│   │   │   ├── src
-│   │   │   │   ├── makefile
-│   │   │   │   └── printdir.bat
-│   │   │   └── tables.htm
+│   │   │   └── src
+│   │   │       ├── makefile
+│   │   │       └── printdir.bat
 │   │   ├── record_converter.py
 │   │   └── x_mitdb
 │   │       ├── ANNOTATORS
@@ -1960,6 +1957,7 @@
 │   │   ├── rdsamp_svdb893.csv
 │   │   └── rdsamp_svdb894.csv
 │   ├── medain_filtering_class.py
+│   ├── read_samples.py
 │   ├── test
 │   │   ├── 800.atr
 │   │   ├── 800.dat
@@ -1996,6 +1994,10 @@
 │       └── result.zip
 ├── model.ipynb
 ├── model.py
+├── model_from_ipynb.py
+├── new_RBM.py
+├── new_mode_fuck.py
+├── new_model.ipynb
 ├── outfile_filtered.csv
 ├── record_all
 │   ├── ahadb
@@ -2581,4 +2583,4 @@
 │   └── record_converter.py
 └── tree.txt
 
-36 directories, 2545 files
+36 directories, 2547 files
