@@ -25,17 +25,15 @@ class new_RBM(nn.Module):
 
     ''' ISSUE PART '''
     def v_to_h(self, v):
-        v = (v.clone().detach()).reshape(-1, 13000000)
-        h_bias = (self.h_bias.clone())        
+        # v = (v.clone().detach()).reshape(-1, 13000000)
+        h_bias = torch.flatten(self.h_bias.clone())
+        print(v.size())
+        print(h_bias.size())
+        
         w = (self.W.clone())
 
-        size_msg = '''
-        {} {} {}
-        '''.format(torch.flatten(v).size(), torch.flatten(w).size(), h_bias.size())
-        print(size_msg)
-        
         p_h = F.sigmoid(
-            F.linear(torch.flatten(v), torch.flatten(w), bias=h_bias)
+            F.linear((v), (w), bias=h_bias)
         ).cuda()
 
         sample_h = self.sample_from_p(p_h)
