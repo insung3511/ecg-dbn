@@ -27,7 +27,7 @@ class new_RBM(nn.Module):
     def v_to_h(self, v):
         # v = (v.clone().detach()).reshape(-1, 13000000)
         h_bias = torch.flatten(self.h_bias.clone())
-        print(v.size())
+        print(v.repeat(130000, 1).size())
         print(h_bias.size())
         
         w = (self.W.clone())
