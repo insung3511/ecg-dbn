@@ -11,8 +11,8 @@ class new_RBM(nn.Module):
     def __init__(self, n_vis, n_hid, k, batch):
         super(new_RBM, self).__init__()
         self.W      = nn.Parameter(torch.randn(1, 13000000) * 1e-2)
-        self.v_bias = nn.Parameter(torch.zeros(13000000))
-        self.h_bias = nn.Parameter(torch.zeros(13000000))
+        self.v_bias = nn.Parameter(torch.zeros(batch))
+        self.h_bias = nn.Parameter(torch.zeros(batch))
         self.k      = k
         self.batch  = batch
     
@@ -33,7 +33,8 @@ class new_RBM(nn.Module):
         w = (self.W.clone())
 
         p_h = F.sigmoid(
-            F.linear((v), (w), bias=h_bias)
+            # F.linear((v), (w), bias=h_bias)
+            F.linear(v, w)
         ).cuda()
 
         sample_h = self.sample_from_p(p_h)
@@ -43,7 +44,7 @@ class new_RBM(nn.Module):
         w = self.W.t().clone()
 
         p_v = F.sigmoid(
-            F.linear(h, w, self.v_bias)
+            F.linear(h, w)
         ).cuda()
         
         sample_v = self.sample_from_p(p_v)
@@ -62,9 +63,8 @@ class new_RBM(nn.Module):
 
     def free_energy(self, v):
         v_bias_term = torch.mv(v, self.v_bias).cuda()
-        h_bias = self.h_bias.clone()
         
-        wx_b = F.linear(v, self.W, h_bias).cuda()
+        wx_b = F.linear(v, self.W)
         hidden_term = wx_b.exp().add(1).log().sum(1)
         
         return (-(hidden_term) - v_bias_term).mean()
