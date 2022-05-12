@@ -3,39 +3,35 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.utils.data
 import torch.nn as nn
+import logging
 import torch
 
 class new_RBM(nn.Module): 
     global SIZE
-    cuda = torch.device('cuda')
     def __init__(self, n_vis, n_hid, k, batch):
         super(new_RBM, self).__init__()
         self.W      = nn.Parameter(torch.randn(1, 13000000) * 1e-2)
-        self.v_bias = nn.Parameter(torch.zeros(batch))
-        self.h_bias = nn.Parameter(torch.zeros(batch))
+        self.n_vis  = n_vis
+        self.n_hid  = n_hid
         self.k      = k
         self.batch  = batch
+        self.v_bias = nn.Parameter(torch.zeros(batch))
+        self.h_bias = nn.Parameter(torch.zeros(batch))
     
     def sample_from_p(self, p):
         return F.relu(
             torch.sign(
                 p - Variable(torch.randn(p.size()))
             )
-        ).cuda()
+        )
 
     ''' ISSUE PART '''
     def v_to_h(self, v):
-        # v = (v.clone().detach()).reshape(-1, 13000000)
-        h_bias = torch.flatten(self.h_bias.clone())
-        print(v.repeat(130000, 1).size())
-        print(h_bias.size())
-        
         w = (self.W.clone())
 
         p_h = F.sigmoid(
-            # F.linear((v), (w), bias=h_bias)
             F.linear(v, w)
-        ).cuda()
+        )
 
         sample_h = self.sample_from_p(p_h)
         return p_h, sample_h
@@ -45,7 +41,7 @@ class new_RBM(nn.Module):
 
         p_v = F.sigmoid(
             F.linear(h, w)
-        ).cuda()
+        )
         
         sample_v = self.sample_from_p(p_v)
         return p_v, sample_v
@@ -59,11 +55,15 @@ class new_RBM(nn.Module):
             pre_v_, v_ = self.h_to_v(h_)
             pre_h_, h_ = self.v_to_h(v_)
         estimate_time = datetime.now() - start_time
+        
         return v, v_, estimate_time
 
     def free_energy(self, v):
-        v_bias_term = torch.mv(v, self.v_bias).cuda()
-        
+        ''' ISSUE PART '''
+        print(type(v))
+        print(type(self.v_bias))
+        v_bias_term = torch.mv(v, self.v_bias)
+
         wx_b = F.linear(v, self.W)
         hidden_term = wx_b.exp().add(1).log().sum(1)
         
