@@ -65,7 +65,8 @@ class new_RBM(nn.Module):
         v_bias_term = torch.mv(v.view(1300000, 10), self.v_bias)
 
         wx_b = F.linear(v, self.W)
-        hidden_term = wx_b.exp().add(1).log().sum(1)
+        print(wx_b.dim())
+        hidden_term = wx_b.unsqueeze(0).exp().add(1).log().sum(1)
         
         return (-(hidden_term) - v_bias_term).mean()
     
