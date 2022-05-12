@@ -27,7 +27,7 @@ class new_RBM(nn.Module):
 
     ''' ISSUE PART '''
     def v_to_h(self, v):
-        w = (self.W.clone())
+        w = (self.W.clone()).to('cuda')
 
         p_h = F.sigmoid(
             F.linear(v, w)
