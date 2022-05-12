@@ -60,9 +60,9 @@ class new_RBM(nn.Module):
 
     def free_energy(self, v):
         ''' ISSUE PART '''
-        print(type(v))
-        print(type(self.v_bias))
-        v_bias_term = torch.mv(v, self.v_bias)
+        print((v.view(10, 1300000).size()))
+        print((self.v_bias))
+        v_bias_term = torch.mv(v.view(1300000, 10), self.v_bias)
 
         wx_b = F.linear(v, self.W)
         hidden_term = wx_b.exp().add(1).log().sum(1)
