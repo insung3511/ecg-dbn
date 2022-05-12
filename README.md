@@ -164,6 +164,9 @@ Last Updated : May. 4th. 2022
 ## ./record_all/record_converter.py
 ecg-csv repo에 있는 코드를 활용한 것으로 ECG Database 들을 활용하기 위해서는 wfdb 를 활용해야한다. wfdb wave에서 제공해주는 application을 파이썬에서 실행시켜 csv 파일로 변환을 한다. 자세한 코드는 [여기를](https://github.com/insung3511/ecg-csv) 통해 확인이 가능하다.
 
+Update. (May. 12th)
+기존에 작성하고 있던 코드에서 아주 크나큰 문제가 있는데 그것은 바로 annotation 즉, 라벨을 하나도 처리하지 않았다는 것이다. 지금까지 받아왔던 Input들은 모두 그저 하나의 Feature들의 집합 밖에 불과 한 것이다. 심지어 지금 생각해보니 Linear SVM은 Test 이후에 들어갈게 아니라 GB-DBN 테스트 이후에 Test로 들어갔어야 했다... 하 모든게 잘못된거 같다. 최대한 빨리 수정을 할 예정이며 코드 수정사항 및 여러 문제 등은 CHANGES.txt에 Logging 할 예정
+
 ## ./data/medain_filtering_class.py
 지정된 dataset을 pre-processing을 거쳐 신호처리를 하는 코드이다. record_all 디렉토리에 record database가 모두 있으며 앞서 말한 record_converter 파이썬 코드를 통해서 csv로 바꿨다. median_filtering_class (이하 mf.) 는 추출한 csv 파일을 읽어와 논문에서 말한 Pre-processing 방식으로 신호처리를 진행한다.
 
