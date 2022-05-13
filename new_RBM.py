@@ -56,14 +56,6 @@ class new_RBM(nn.Module):
             pre_h_, h_ = self.v_to_h(v_)
         estimate_time = datetime.now() - start_time
         return v, v_, estimate_time
-
-    # def free_energy(self, v):
-    #     v_bias_term = torch.mv(v.view(-1, 10), self.v_bias)
-
-    #     wx_b = F.linear(v, self.W)
-    #     hidden_term = wx_b.unsqueeze(0).exp().add(1).log().sum(1)
-        
-    #     return (-(hidden_term) - v_bias_term).mean()
     
     def get_weight(self):
         return self.W
