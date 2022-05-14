@@ -14,7 +14,6 @@ import torch
 import time
 import os
 
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
 print(datetime.datetime.now(), "model.py code start")
 
 BATCH_SIZE = 10
@@ -28,6 +27,7 @@ K_FOLD = 1
 # %%
 device = torch.device('cuda')
 print(torch.cuda.get_device_name(device))
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 # %%
 class RBM(nn.Module): 
@@ -111,9 +111,9 @@ first_train_op = optim.Adagrad(rbm_first.parameters(), 0.1)
 second_train_op = optim.Adagrad(rbm_second.parameters(), 0.1)
 third_train_op = optim.Adagrad(rbm_third.parameters(), 0.1)
 
-gb_first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
-gb_second_train_op = optim.SGD(rbm_second.parameters(), 0.1)
-gb_third_train_op = optim.SGD(rbm_third.parameters(), 0.1)
+gb_first_train_op = optim.Adagrad(rbm_first.parameters(), 0.1)
+gb_second_train_op = optim.Adagrad(rbm_second.parameters(), 0.1)
+gb_third_train_op = optim.Adagrad(rbm_third.parameters(), 0.1)
 
 output_from_first = list()
 output_from_second = list()
@@ -159,10 +159,10 @@ for epoch in range(EPOCH):
                 torch.tensor(data, dtype=torch.float32)
         ).uniform_(0, 1)
 
-        sample_data = torch.bernoulli(data).view(-1, 10)
+        sample_data = torch.bernoulli(data).view(-1, 10).to(device=device)
 
         # tensor binary
-        vog_second, v2, mt = rbm_second(sample_data)
+        vog_second, v2 = rbm_second(sample_data)
         omse_loss = mse_loss(vog_second, v2)
 
         second_train_op.zero_grad()
@@ -184,9 +184,9 @@ for epoch in range(EPOCH):
                 torch.tensor(data, dtype=torch.float32)
         ).uniform_(0, 1)
 
-        sample_data = torch.bernoulli(data).view(-1, 10)
+        sample_data = torch.bernoulli(data).view(-1, 10).to(device=device)
 
-        vog_third, v3, mt = rbm_third(sample_data)
+        vog_third, v3 = rbm_third(sample_data)
         omse_loss = mse_loss(vog_third, v3)
         
         third_train_op.zero_grad()
@@ -199,17 +199,9 @@ for epoch in range(EPOCH):
 
 
 # %%
-rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE)
-rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE)
-rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE)
-
-first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
-second_train_op = optim.SGD(rbm_second.parameters(), 0.1)
-third_train_op = optim.SGD(rbm_third.parameters(), 0.1)
-
-gb_first_train_op = optim.SGD(rbm_first.parameters(), 0.1)
-gb_second_train_op = optim.SGD(rbm_second.parameters(), 0.1)
-gb_third_train_op = optim.SGD(rbm_third.parameters(), 0.1)
+# rbm_first = RBM(n_vis=VISIBLE_UNITS[0], n_hid=HIDDEN_UNITS[0], k=K_FOLD, batch=BATCH_SIZE).to(device=device)
+# rbm_second = RBM(n_vis=VISIBLE_UNITS[1], n_hid=HIDDEN_UNITS[1], k=K_FOLD, batch=BATCH_SIZE).to(device=device)
+# rbm_third = RBM(n_vis=VISIBLE_UNITS[2], n_hid=HIDDEN_UNITS[2], k=K_FOLD, batch=BATCH_SIZE).to(device=device)
 
 output_from_first = list()
 output_from_second = list()
@@ -219,9 +211,9 @@ mse_loss = nn.MSELoss()
 gaussian_std = torch.arange(1, 0, -0.1)
 
 # %%
-loss_ = []
-output_from_third = torch.tensor(output_from_third)
+''' ** ISSUE PART ** '''
 
+loss_ = []
 for epoch in range(EPOCH):
     '''First gbrbm'''
     for i, (data) in enumerate(output_from_third):
@@ -232,14 +224,14 @@ for epoch in range(EPOCH):
         sample_data = torch.normal(mean=data, std=gaussian_std).view(-1, 10)
 
         # tensor binary
-        vog_first, v1, mt = rbm_first(sample_data)
+        vog_first, v1 = rbm_first(sample_data)
         omse_loss = mse_loss(vog_first, v1)
 
         first_train_op.zero_grad()
         first_train_op.step()
         omse_loss.backward()
     output_from_first.append(v1.tolist())
-    print("1ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, omse_loss, mt))
+    print("1ST GBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, omse_loss))
 
 
 # %%
@@ -258,7 +250,7 @@ for epoch in range(EPOCH):
         sample_data = torch.normal(mean=data, std=gaussian_std).view(-1, 10)
 
         # tensor binary
-        vog_second, v2, mt = rbm_second(sample_data)
+        vog_second, v2 = rbm_second(sample_data)
         omse_loss = mse_loss(vog_second, v2)
 
         second_train_op.zero_grad()
@@ -281,7 +273,7 @@ for epoch in range(EPOCH):
 
         sample_data = torch.bernoulli(data).view(-1, 10)
 
-        vog_third, v3, mt = rbm_third(sample_data)
+        vog_third, v3 = rbm_third(sample_data)
         omse_loss = mse_loss(vog_third, v3)
         
         third_train_op.zero_grad()
@@ -291,6 +283,9 @@ for epoch in range(EPOCH):
     end = time.time()
     output_from_third.append(v3)
     print("3ST BBrbm_first Training loss for {0} epoch {1}\tEstimate time : {2}".format(epoch, omse_loss, end - start))
+
+
+# %%
 
 
 
