@@ -8,3 +8,4 @@ arc/May.zip filter=lfs diff=lfs merge=lfs -text
 arc/April.zip filter=lfs diff=lfs merge=lfs -text
 arc/May.zip filter=lfs diff=lfs merge=lfs -text
 test/cuda_model.ipynb filter=lfs diff=lfs merge=lfs -text
+cuda_model.ipynb filter=lfs diff=lfs merge=lfs -text
