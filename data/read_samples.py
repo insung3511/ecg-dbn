@@ -1,9 +1,7 @@
-from scipy.signal import butter, filtfilt
-import pandas as pd
-import numpy as np
+from scipy.signal import butter, filtfilt, medfilt
+from itertools import chain
 import itertools
 import wfdb
-import os
 
 FILE_NUM_FLAG = 0
 DB_LIST = ['db1', 'db2', 'db3/svdb']
@@ -22,6 +20,12 @@ db3_anno = list()
 def list_to_list(input_list):
     input_list_to_list = list(itertools.chain(*input_list))
     return input_list_to_list
+
+#######################
+#    Median filter   #
+#######################
+def median_filter(data, fs):
+    return medfilt(data, fs)
 
 #######################
 #    Low-pass filter  #
@@ -116,25 +120,31 @@ def return_list():
         db3_signals.append(signals.tolist())
         db3_anno.append(annotation.symbol)
 
+    db1_fs = list()
+    db2_fs = list()
+    db3_fs = list()
+    
     db1_butter = list()
     db2_butter = list()
     db3_butter = list()
 
-    # db1_butter = db1_signals
-    # db2_butter = db2_signals
-    # db3_butter = db3_signals
-
     print("[INFO] DB1 Filtering...")
     for i in range(len(db1_signals)):
-        db1_butter.append(butter_lowpass(3.667, (db1_signals[i])))
+        db1_fs.append(median_filter(median_filter(db1_signals, 199), 599))
+    for i in range(len(db1_fs)):
+        db1_butter.append(butter_lowpass(3.667, (db1_fs[i])))
     
     print("[INFO] DB2 Filtering...")
     for i in range(len(db2_signals)):
-        db2_butter.append(butter_lowpass(3.667, (db2_signals[i])))
+        db2_fs.append(median_filter(median_filter(db2_signals, 199), 599))
+    for i in range(len(db2_fs)):
+        db2_butter.append(butter_lowpass(3.667, (db2_fs[i])))
 
     print("[INFO] DB3 Filtering...")
     for i in range(len(db3_signals)):
-        db3_butter.append(butter_lowpass(3.667, (db3_signals[i])))
+        db3_fs.append(median_filter(median_filter(db3_signals, 199), 599))
+    for i in range(len(db3_fs)):
+        db3_butter.append(butter_lowpass(3.667, (db3_fs[i])))
 
     print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
           "DB2 butter size : {}, DB2 Anno size : {}\n".format(len(db2_butter), len(db2_anno)),    \
