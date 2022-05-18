@@ -10,6 +10,9 @@ May. 18. 2022 (B. InSung)
 - cuda_model_csv_cheese.ipyn에서 새로운 네트워크를 구성하는 중.
     - cuda_model_csv_cheese.ipynb 사망함.
 - cuda_model_csv_cheese copy.ipynb 에서는 기존 네트워크에서 잘 나온 모델 저장.
+# TODO
+- SVM Input 이전 표준화.
+- Normal을 제외, 학습하기.
 
 May. 17. 2022 (B. InSung)
 - Late Tuesday Session
@@ -64,6 +67,7 @@ h_bias를 제거함. 근데 다른 문제 생김.
 ->  0x167276600 <+928>: st1.4s { v0, v1 }, [x10], #32
     0x167276604 <+932>: add    x9, x22, #0x10
     0x167276608 <+936>: st1.4s { v2, v3 }, [x10]
+
     0x16727660c <+940>: add    x8, x8, #0x40
 오버플로우남. 뒤질까
 - 나는 멍청하다..
