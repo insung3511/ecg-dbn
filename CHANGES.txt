@@ -3,6 +3,10 @@
 May. 5. 2022 (B. InSung)
 - Linear 모델 까지 통과, 이제 정상 비트냐 이소성 비트냐만 결과 도출하면 끝
 
+May. 18. 2022 (B. InSung)
+- SVM Train을 한번에 동시에 돌리자 Out of bounds 오류 발생. 이를 해결하기 위해 디버깅 진행 중.
+- 현재 작업 파일 명: cuda_model_csv_cheese.ipynb
+
 May. 17. 2022 (B. InSung)
 - Late Tuesday Session
 - SVM Linear 학습 진행은 완료됨. 다만 문제는 accuaracy 확인 불가. 일단 테스트 까지 하고 결과를 볼 예정.
