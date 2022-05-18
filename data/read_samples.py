@@ -1,5 +1,6 @@
 from scipy.signal import butter, filtfilt, medfilt
-from itertools import chain
+# from itertools import chain
+import matplotlib.pyplot as plt
 import itertools
 import wfdb
 
@@ -152,4 +153,7 @@ def return_list():
 
     return db1_butter, db1_anno, db2_butter, db2_anno, db3_butter, db3_anno
 
-# return_list()
+# a, a1, b, b1, c, c1 = return_list()
+# plt.plot(a, range(0, len(a)))
+# plt.plot(b, b1)
+# plt.plot(c, c1)
