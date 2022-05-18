@@ -70,55 +70,55 @@ def return_list():
         db1_signals.append(signals.tolist())
         db1_anno.append(annotation.symbol)
 
-    # '''DB2
-    # '''
+    '''DB2
+    '''
 
-    # FILE_NUM_FLAG = 1
-    # PATH = './data/' + DB_LIST[FILE_NUM_FLAG] + '/'
-    # print("[INFO] Read records file from ", PATH)
-    # with open(PATH + 'RECORDS') as f:
-    #     record_lines = f.readlines()
+    FILE_NUM_FLAG = 1
+    PATH = './data/' + DB_LIST[FILE_NUM_FLAG] + '/'
+    print("[INFO] Read records file from ", PATH)
+    with open(PATH + 'RECORDS') as f:
+        record_lines = f.readlines()
 
-    # pre_records = []
-    # for x in record_lines:
-    #     pre_records.append(x.strip())
-    # print("[RSLT]\t\t\t Export records ...")
-    # print("\t\t",pre_records)
+    pre_records = []
+    for x in record_lines:
+        pre_records.append(x.strip())
+    print("[RSLT]\t\t\t Export records ...")
+    print("\t\t",pre_records)
 
-    # print("[INFO]./rdsamp commending start")
-    # for i in range(len(pre_records)):
-    #     match_list_cnt = 0
-    #     print("[IWIP]\t\trdsamp Converting", pre_records[i], PATH)
-    #     signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
-    #     annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
+    print("[INFO]./rdsamp commending start")
+    for i in range(len(pre_records)):
+        match_list_cnt = 0
+        print("[IWIP]\t\trdsamp Converting", pre_records[i], PATH)
+        signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
+        annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
 
-    #     db2_signals.append(signals.tolist())
-    #     db2_anno.append(annotation.symbol)
+        db2_signals.append(signals.tolist())
+        db2_anno.append(annotation.symbol)
 
-    # '''DB3
-    # '''
+    '''DB3
+    '''
 
-    # FILE_NUM_FLAG = 2
-    # PATH = './data/' + DB_LIST[FILE_NUM_FLAG] + '/'
-    # print("[INFO] Read records file from ", PATH)
-    # with open(PATH + 'RECORDS') as f:
-    #     record_lines = f.readlines()
+    FILE_NUM_FLAG = 2
+    PATH = './data/' + DB_LIST[FILE_NUM_FLAG] + '/'
+    print("[INFO] Read records file from ", PATH)
+    with open(PATH + 'RECORDS') as f:
+        record_lines = f.readlines()
 
-    # pre_records = []
-    # for x in record_lines:
-    #     pre_records.append(x.strip())
-    # print("[RSLT]\t\t\t Export records ...")
-    # print("\t\t",pre_records)
+    pre_records = []
+    for x in record_lines:
+        pre_records.append(x.strip())
+    print("[RSLT]\t\t\t Export records ...")
+    print("\t\t",pre_records)
 
-    # print("[INFO]./rdsamp commending start")
-    # for i in range(len(pre_records)):
-    #     match_list_cnt = 0
-    #     print("[IWIP]\t\trdsamp Converting", pre_records[i], PATH)
-    #     signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
-    #     annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
+    print("[INFO]./rdsamp commending start")
+    for i in range(len(pre_records)):
+        match_list_cnt = 0
+        print("[IWIP]\t\trdsamp Converting", pre_records[i], PATH)
+        signals, _ = wfdb.rdsamp(PATH + pre_records[i], sampfrom=0)
+        annotation = wfdb.rdann(PATH + pre_records[i], 'atr', sampfrom=0, return_label_elements=['symbol'])
 
-    #     db3_signals.append(signals.tolist())
-    #     db3_anno.append(annotation.symbol)
+        db3_signals.append(signals.tolist())
+        db3_anno.append(annotation.symbol)
 
     db1_fs = list()
     db2_fs = list()
@@ -134,24 +134,24 @@ def return_list():
     for i in range(len(db1_fs)):
         db1_butter.append(butter_lowpass(3.667, (db1_fs[i])))
     
-    # print("[INFO] DB2 Filtering...")
-    # for i in range(len(db2_signals)):
-    #     db2_fs.append(median_filter(median_filter(db2_signals, 199), 599))
-    # for i in range(len(db2_fs)):
-    #     db2_butter.append(butter_lowpass(3.667, (db2_fs[i])))
+    print("[INFO] DB2 Filtering...")
+    for i in range(len(db2_signals)):
+        db2_fs.append(median_filter(median_filter(db2_signals, 199), 599))
+    for i in range(len(db2_fs)):
+        db2_butter.append(butter_lowpass(3.667, (db2_fs[i])))
 
-    # print("[INFO] DB3 Filtering...")
-    # for i in range(len(db3_signals)):
-    #     db3_fs.append(median_filter(median_filter(db3_signals, 199), 599))
-    # for i in range(len(db3_fs)):
-    #     db3_butter.append(butter_lowpass(3.667, (db3_fs[i])))
+    print("[INFO] DB3 Filtering...")
+    for i in range(len(db3_signals)):
+        db3_fs.append(median_filter(median_filter(db3_signals, 199), 599))
+    for i in range(len(db3_fs)):
+        db3_butter.append(butter_lowpass(3.667, (db3_fs[i])))
 
-    # print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
-    #       "DB2 butter size : {}, DB2 Anno size : {}\n".format(len(db2_butter), len(db2_anno)),    \
-    #       "DB3 butter size : {}, DB3 Anno size : {}\n".format(len(db3_butter), len(db3_anno)))
+    print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
+          "DB2 butter size : {}, DB2 Anno size : {}\n".format(len(db2_butter), len(db2_anno)),    \
+          "DB3 butter size : {}, DB3 Anno size : {}\n".format(len(db3_butter), len(db3_anno)))
 
     return db1_butter, db1_anno, db2_butter, db2_anno, db3_butter, db3_anno
 
-a, a1, b, b1, c, c1 = return_list()
-wfdb.plot_items(a, a1)
-plt.plot(a, range(0, len(a)))
+# a, a1, b, b1, c, c1 = return_list()
+# wfdb.plot_items(a, a1)
+# plt.plot(a, range(0, len(a)))
