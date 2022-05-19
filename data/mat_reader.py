@@ -1,14 +1,16 @@
 # load mit data
 
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from scipy import io
 import pandas as pd
 import numpy as np
 
 # PATH = "/Users/bahk_insung/Documents/Github/ecg-dbn/data/mit.mat"
-PATH = ""
+PATH = "C:/Users/HILAB_Labtop_02/Desktop/insung/ecg-dbn/data/mit.mat"
+
+def to_categorical(y, num_classes):
+    return np.eye(num_classes, dtype='uint8')[y]
 
 mit = io.loadmat(PATH)
 mit = mit['mit']
@@ -25,11 +27,6 @@ X = X.reshape(-1, 428, 1)
 Y = to_categorical(Y, 5)
 
 print(df_mit[428].value_counts(), '\n')
-# 0 = N
-# 1 = Q
-# 2 = S
-# 3 = V
-# 4 = F
 
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y,
                                                 test_size=0.3,
