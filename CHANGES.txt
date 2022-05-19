@@ -11,8 +11,12 @@ May. 18. 2022 (B. InSung)
     - cuda_model_csv_cheese.ipynb 사망함.
 - cuda_model_csv_cheese copy.ipynb 에서는 기존 네트워크에서 잘 나온 모델 저장.
 # TODO
-- SVM Input 이전 표준화.
-- Normal을 제외, 학습하기.
+    // - SVM Input 이전 표준화.
+    // - Normal을 제외, q 제외, 학습하기.
+    - EPOCH = 200 으로 늘리기
+    - Visible Layer 의 갯수 187
+    - 180, 80, 200 BB-DBN Hidden Layer의 갯수
+    - 100, 250, 120 GB-DBN Hidden Layer의 유닛 갯수.
 
 May. 17. 2022 (B. InSung)
 - Late Tuesday Session
