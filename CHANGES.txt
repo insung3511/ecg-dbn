@@ -3,6 +3,13 @@
 May. 5. 2022 (B. InSung)
 - Linear 모델 까지 통과, 이제 정상 비트냐 이소성 비트냐만 결과 도출하면 끝
 
+May. 22. 2022 (B. InSung)
+- Project DECLINED.
+    - 계속 좋지 않은 결과 물이 나와 최종적으로 프로젝트 종료를 진행하였다. 개인적인 생각으로 문제는 Pre-processing 이 GB-DBN에서는 가장 중요한데 이를 제대로 못 해준 점, 그리고 기본적으로 나의 실력이 많이 미숙한 점이 가장 크다. 이 번 기회에로 Torch를 접했으니 일단 지속적으로 공부하고 코드보다는 모델의 이해에 좀 더 집중할려고 한다.
+    - Project is done. 
+        May. 22. 2022. 
+        PM  21:46
+
 May. 20. 2022 (B. InSung)
 - RuntimeError: CUDA error: device-side assert triggered
     - mat_reader_model.ipynb에서 오류 발생
