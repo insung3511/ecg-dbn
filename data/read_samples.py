@@ -131,28 +131,33 @@ def return_list():
     db3_butter = list()
 
     print("[INFO] DB1 Filtering...")
-    for i in range(len(db1_signals)):
-        db1_fs.append(median_filter(median_filter(db1_signals, 199), 599))
-    print("200ms, 600ms passed")
+    # for i in range(len(db1_signals)):
+    #     db1_fs.append(median_filter(median_filter(db1_signals, 199), 599))
+    # print("200ms, 600ms passed")
     
-    for i in range(len(db1_fs)):
-        db1_butter.append(butter_lowpass(3.667, (db1_fs[i])))
+    for i in range(len(db1_signals)):
+        # db1_butter.append(butter_lowpass(3.667, (db1_fs[i])))
+        db1_butter.append(butter_lowpass(3.667, (db1_signals[i])))
     print("Cut-off passed")
     
     print("[INFO] DB2 Filtering...")
+    # for i in range(len(db2_signals)):
+    #     db2_fs.append(median_filter(median_filter(db2_signals, 199), 599))
+    # print("200ms, 600ms passed")
+    
     for i in range(len(db2_signals)):
-        db2_fs.append(median_filter(median_filter(db2_signals, 199), 599))
-    print("200ms, 600ms passed")
-    for i in range(len(db2_fs)):
-        db2_butter.append(butter_lowpass(3.667, (db2_fs[i])))
+        # db2_butter.append(butter_lowpass(3.667, (db2_fs[i])))
+        db2_butter.append(butter_lowpass(3.667, (db2_signals[i])))
     print("Cut-off passed")
 
     print("[INFO] DB3 Filtering...")
+    # for i in range(len(db3_signals)):
+    #     db3_fs.append(median_filter(median_filter(db3_signals, 199), 599))
+    # print("200ms, 600ms passed")
+    
     for i in range(len(db3_signals)):
-        db3_fs.append(median_filter(median_filter(db3_signals, 199), 599))
-    print("200ms, 600ms passed")
-    for i in range(len(db3_fs)):
-        db3_butter.append(butter_lowpass(3.667, (db3_fs[i])))
+        # db3_butter.append(butter_lowpass(3.667, (db3_fs[i])))
+        db3_butter.append(butter_lowpass(3.667, (db3_signals[i])))
     print("Cut-off passed")
 
     print("DB1 butter size : {}, DB1 Anno size : {}\n".format(len(db1_butter), len(db1_anno)),    \
