@@ -1,6 +1,6 @@
 from scipy.signal import butter, filtfilt, medfilt
-# from itertools import chain
 import matplotlib.pyplot as plt
+import numpy as np
 import itertools
 import wfdb
 
@@ -26,7 +26,6 @@ def list_to_list(input_list):
 #    Median filter   #
 #######################
 def median_filter(data, fs):
-    print(data)
     return medfilt(data, fs)
 
 #######################
@@ -37,7 +36,6 @@ def butter_lowpass(cutoff, butter_data, fs=35, order=12):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    print(butter_data)
     return filtfilt(b, a, list_to_list(butter_data))
 
 def return_list():
@@ -60,7 +58,6 @@ def return_list():
     for x in record_lines:
         pre_records.append(x.strip())
     print("[RSLT]\t\t\t Export records ...")
-    print("\t\t",pre_records)
 
     print("[INFO]./rdsamp commending start")
     for i in range(len(pre_records)):
@@ -85,7 +82,6 @@ def return_list():
     for x in record_lines:
         pre_records.append(x.strip())
     print("[RSLT]\t\t\t Export records ...")
-    print("\t\t",pre_records)
 
     print("[INFO]./rdsamp commending start")
     for i in range(len(pre_records)):
@@ -110,7 +106,6 @@ def return_list():
     for x in record_lines:
         pre_records.append(x.strip())
     print("[RSLT]\t\t\t Export records ...")
-    print("\t\t",pre_records)
 
     print("[INFO]./rdsamp commending start")
     for i in range(len(pre_records)):
