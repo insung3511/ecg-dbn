@@ -53,7 +53,7 @@ for i in range(len(pre_records)):
     for i in range(0, len(ms_flt_array)):
         mfa[i] = get_median_filter_width(360, ms_flt_array[i])
 
-    signal_flt = np.trim_zeros(filter_signal(signals)).tolist()
+    signal_flt = (filter_signal(signals)).tolist()
 
     db1_signals.append(signal_flt.tolist())
     db1_anno.append(annotation.symbol)
